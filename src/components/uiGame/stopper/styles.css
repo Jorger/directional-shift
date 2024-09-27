@@ -1,0 +1,8 @@
+.stopper {
+  position: absolute;
+  background: #1e1e26;
+  height: var(--stopper-size);
+  width: var(--stopper-size);
+  box-shadow: inset #9b9fae 0px 0px 0px var(--arrow--shadow-1),
+    inset #ced1d9 0px 0px 0px var(--arrow--shadow-2);
+}
