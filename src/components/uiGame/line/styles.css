@@ -1,0 +1,23 @@
+.line {
+  position: absolute;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #e0e0e0 50%,
+    #b0b0b0 51%,
+    #808080 100%
+  );
+
+  /* TODO: la velocidad debe ser configurable */
+  transition: transform 0.3s ease;
+}
+
+.line.vertical {
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #e0e0e0 50%,
+    #b0b0b0 51%,
+    #808080 100%
+  );
+}
