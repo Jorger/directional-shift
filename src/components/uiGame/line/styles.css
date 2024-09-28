@@ -21,3 +21,16 @@
     #808080 100%
   );
 }
+
+button.line {
+  border: 0;
+  cursor: pointer;
+}
+
+button.line.selected {
+  background: white;
+}
+
+button.line.highlight {
+  background: red;
+}

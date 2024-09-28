@@ -6,3 +6,14 @@
   box-shadow: inset #9b9fae 0px 0px 0px var(--arrow--shadow-1),
     inset #ced1d9 0px 0px 0px var(--arrow--shadow-2);
 }
+
+button.stopper {
+  border: none;
+  cursor: pointer;
+}
+
+button.stopper.selected {
+  box-shadow: inset green 0px 0px 0px var(--arrow--shadow-1),
+    inset yellow 0px 0px 0px var(--arrow--shadow-2);
+  background: white;
+}
