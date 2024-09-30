@@ -10,7 +10,6 @@
           scale: "scaleX",
           origin: "left",
         }}
-        isEditor
         isSelected
         onSelect={(value) => console.log({ value })}
       />
@@ -26,7 +25,6 @@
           scale: "scaleX",
           origin: "right",
         }}
-        isEditor
         highlight
         onSelect={(value) => console.log({ value })}
       />
@@ -41,7 +39,6 @@
           scale: "scaleY",
           origin: "top",
         }}
-        isEditor
         onSelect={(value) => console.log({ value })}
       />
       {/* vertical, cambia el tamaño de arriba a abajo  */}
@@ -55,48 +52,40 @@
           scale: "scaleY",
           origin: "bottom",
         }}
-        isEditor
         onSelect={(value) => console.log({ value })}
       />
-
-      <Stopper
-        coordinate={{ x: 50, y: 400 - STOPPER_SIZE / 3 }}
-        isEditor
-        isSelected
-        onSelect={(value) => console.log({ value })}
-      />
+      {/* Prueba Stopper */}
+      {/* onSelect={(value) => console.log({ value })} */}
+      <Stopper coordinate={{ x: 50, y: 400 - STOPPER_SIZE / 3 }} isSelected />
 
       <Stopper coordinate={{ x: 150 - STOPPER_SIZE / 3, y: 460 }} />
 
       {/* Prueba puntos de llegada */}
       <Arrival
         coordinate={{ x: ARROW_SIZE * 2.5, y: ARROW_SIZE }}
-        isEditor
         isSelected
         onSelect={(value) => console.log({ value })}
       />
       <Arrival
         coordinate={{ x: ARROW_SIZE * 2.5, y: ARROW_SIZE * 5 }}
-        isEditor
         highlight
       />
       {/* Prueba arrows */}
       <Arrow
         index={0}
         state="MOVEMENT"
-        orientation="BOTTOM"
+        orientation="TOP"
         coordinate={{ x: ARROW_SIZE, y: ARROW_SIZE }}
         onSelect={(value) => console.log({ value })}
         rotation={0}
       />
       <Arrow
         index={1}
-        state="IDLE"
+        state="COLLISION"
         orientation="LEFT"
         coordinate={{ x: ARROW_SIZE * 5, y: ARROW_SIZE }}
         onSelect={(value) => console.log({ value })}
-        rotation={0}
-        isSelected
+        rotation={270}
       />
       <Arrow
         index={2}
@@ -104,13 +93,13 @@
         orientation="RIGHT"
         coordinate={{ x: ARROW_SIZE, y: ARROW_SIZE * 5 }}
         onSelect={(value) => console.log({ value })}
-        rotation={0}
+        rotation={90}
       />
       <Arrow
         index={3}
-        state="IDLE"
-        orientation="TOP"
+        state="COLLISION"
+        orientation="BOTTOM"
         coordinate={{ x: ARROW_SIZE * 5, y: ARROW_SIZE * 5 }}
         onSelect={(value) => console.log({ value })}
-        rotation={0}
+        rotation={180}
       />

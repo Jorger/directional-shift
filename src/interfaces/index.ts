@@ -1,4 +1,5 @@
 import {
+  ELineFinish,
   ELineOrigin,
   ELineScale,
   EOrietantation,
@@ -9,6 +10,7 @@ export type TOrietantation = keyof typeof EOrietantation;
 export type TLineScale = keyof typeof ELineScale;
 export type TLineOrigin = keyof typeof ELineOrigin;
 export type TStateArrow = keyof typeof EStateArrow;
+export type TLineFinish = keyof typeof ELineFinish;
 
 export interface ILineTranform {
   scale: TLineScale;
@@ -35,6 +37,10 @@ export interface Iline {
   width: number;
   transform: ILineTranform;
   value: number;
+  finish: TLineFinish;
+  // Para quitar el elemento del dom
+  visible?: boolean;
+  // fullStop: ICoordinate;
 }
 
 export interface IArrival {
@@ -45,4 +51,19 @@ export interface IArrival {
 export interface IStopper {
   index?: number;
   coordinate: ICoordinate;
+  // Se quita del dom cuando no es necesario...
+  visible?: boolean;
+}
+
+export interface IPathArrow {
+  arrow: IArrow;
+  indexLines: number[];
+  indexArrival: number;
+}
+
+export interface ILevel {
+  arrows: IPathArrow[];
+  lines: Iline[];
+  stoppers: IStopper[];
+  arrivals: IArrival[];
 }

@@ -4,14 +4,12 @@ import React from "react";
 import type { Iline } from "../../../interfaces";
 
 interface LineProps extends Iline {
-  isEditor?: boolean;
   isSelected?: boolean;
   highlight?: boolean;
   onSelect?: (index: number) => void;
 }
 
 const Line = ({
-  isEditor = false,
   index = 0,
   coordinate,
   height = LINE_SIZE,
@@ -35,7 +33,7 @@ const Line = ({
     width,
   };
 
-  if (isEditor) {
+  if (onSelect) {
     className += `${isSelected ? " selected" : ""}${
       highlight ? " highlight" : ""
     }`;
@@ -44,7 +42,7 @@ const Line = ({
       <button
         className={className}
         style={style}
-        onClick={() => onSelect && onSelect(index)}
+        onClick={() => onSelect(index)}
       />
     );
   }

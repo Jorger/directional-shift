@@ -1,5 +1,5 @@
-import AppWrapper from "./components/wrapper/app";
 import Editor from "./components/editor";
+import AppWrapper from "./components/wrapper/app";
 
 function App() {
   return (

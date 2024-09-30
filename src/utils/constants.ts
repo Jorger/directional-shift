@@ -32,6 +32,12 @@ export enum EStateArrow {
   MOVEMENT = "MOVEMENT",
 }
 
+export enum ELineFinish {
+  "NEXT" = "NEXT",
+  "STOPPER" = "STOPPER",
+  "ARRIVAL" = "ARRIVAL",
+}
+
 // Variables CSS globales del juego...
 document.documentElement.style.setProperty("--base-height", `${BASE_HEIGHT}px`);
 document.documentElement.style.setProperty("--base-width", `${BASE_WIDTH}px`);

@@ -7,7 +7,7 @@
   /* color: #444454; */
   cursor: pointer;
   display: flex;
-  /* font-size: var(--arrow-f-size); */
+  font-size: var(--arrow-f-size);
   height: var(--arrow-size);
   justify-content: center;
   position: absolute;
@@ -24,7 +24,6 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  rotate: 0deg;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,29 +35,22 @@
   border-bottom: var(--arrow-f-size) solid #444454;
 }
 
-.arrow.right::after {
-  rotate: 90deg;
-}
-
-.arrow.left::after {
-  rotate: 270deg;
-}
-
-.arrow.bottom::after {
-  rotate: 180deg;
-}
-
 .arrow.finish::after {
-  content: "";
   background: #444454;
-  width: 50%;
+  border: 1px solid #444454;
+  content: "";
   height: 50%;
+  width: 50%;
 }
 
 .arrow.collision::after {
-  content: "x";
-  align-items: baseline;
-  rotate: 0deg;
+  content: "X";
+  width: 100%;
+  height: 100%;
+  border: 1px solid transparent;
+  color: #444454;
+  font-size: 40px;
+  font-weight: bold;
 }
 
 .arrow.selected {
