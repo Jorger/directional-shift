@@ -1,29 +1,32 @@
 import "./styles.css";
-import { EOrietantation } from "../../../utils/constants";
-import type { ICoordinate, TOrietantation } from "../../../interfaces";
+import { EOrietantation, EStateArrow } from "../../../utils/constants";
+import type { IArrow } from "../../../interfaces";
 
-interface ArrowProps {
-  index: number;
-  orientation: TOrietantation;
-  coordinate: ICoordinate;
-  rotation?: number;
-  finished?: boolean;
-  disabled?: boolean;
+interface ArrowProps extends IArrow {
+  isSelected?: boolean;
   onSelect: (index: number) => void;
 }
 
 const Arrow = ({
   index = 0,
-  orientation = EOrietantation.RIGHT,
+  orientation = EOrietantation.TOP,
   coordinate = { x: 0, y: 0 },
+  state = EStateArrow.IDLE,
   rotation = 0,
-  finished = false,
-  disabled = false,
+  isSelected = false,
   onSelect,
 }: ArrowProps) => {
-  const className = `arrow ${orientation.toLowerCase()} ${
-    finished ? "finished" : ""
+  /**
+   * Clases que cambian el UI del arrow...
+   */
+  const className = `arrow ${orientation.toLowerCase()} ${state.toLowerCase()} ${
+    isSelected ? "selected" : ""
   }`;
+
+  /**
+   * Sólo estará habilitado cuando está quieto...
+   */
+  const disabled = !(state === EStateArrow.IDLE);
 
   const style: React.CSSProperties = {
     left: coordinate.x,

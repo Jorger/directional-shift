@@ -1,0 +1,105 @@
+{/* Prueba para las líneas */}
+      {/* Horizontal, cambia el tamaño de derecha a izquierda  */}
+      <Line
+        index={0}
+        coordinate={{ x: 10, y: 400 }}
+        height={LINE_SIZE}
+        width={300}
+        value={1}
+        transform={{
+          scale: "scaleX",
+          origin: "left",
+        }}
+        isSelected
+        onSelect={(value) => console.log({ value })}
+      />
+
+      {/* Horizontal, cambia el tamaño de izquierda a derecha  */}
+      <Line
+        index={1}
+        coordinate={{ x: 10, y: 430 }}
+        height={LINE_SIZE}
+        width={300}
+        value={1}
+        transform={{
+          scale: "scaleX",
+          origin: "right",
+        }}
+        highlight
+        onSelect={(value) => console.log({ value })}
+      />
+      {/* vertical, cambia el tamaño de abajo a arriba  */}
+      <Line
+        index={2}
+        coordinate={{ x: 100, y: 460 }}
+        height={200}
+        width={LINE_SIZE}
+        value={1}
+        transform={{
+          scale: "scaleY",
+          origin: "top",
+        }}
+        onSelect={(value) => console.log({ value })}
+      />
+      {/* vertical, cambia el tamaño de arriba a abajo  */}
+      <Line
+        index={3}
+        coordinate={{ x: 150, y: 460 }}
+        height={200}
+        width={LINE_SIZE}
+        value={1}
+        transform={{
+          scale: "scaleY",
+          origin: "bottom",
+        }}
+        onSelect={(value) => console.log({ value })}
+      />
+      {/* Prueba Stopper */}
+      {/* onSelect={(value) => console.log({ value })} */}
+      <Stopper coordinate={{ x: 50, y: 400 - STOPPER_SIZE / 3 }} isSelected />
+
+      <Stopper coordinate={{ x: 150 - STOPPER_SIZE / 3, y: 460 }} />
+
+      {/* Prueba puntos de llegada */}
+      <Arrival
+        coordinate={{ x: ARROW_SIZE * 2.5, y: ARROW_SIZE }}
+        isSelected
+        onSelect={(value) => console.log({ value })}
+      />
+      <Arrival
+        coordinate={{ x: ARROW_SIZE * 2.5, y: ARROW_SIZE * 5 }}
+        highlight
+      />
+      {/* Prueba arrows */}
+      <Arrow
+        index={0}
+        state="MOVEMENT"
+        orientation="TOP"
+        coordinate={{ x: ARROW_SIZE, y: ARROW_SIZE }}
+        onSelect={(value) => console.log({ value })}
+        rotation={0}
+      />
+      <Arrow
+        index={1}
+        state="COLLISION"
+        orientation="LEFT"
+        coordinate={{ x: ARROW_SIZE * 5, y: ARROW_SIZE }}
+        onSelect={(value) => console.log({ value })}
+        rotation={270}
+      />
+      <Arrow
+        index={2}
+        state="IDLE"
+        orientation="RIGHT"
+        coordinate={{ x: ARROW_SIZE, y: ARROW_SIZE * 5 }}
+        onSelect={(value) => console.log({ value })}
+        rotation={90}
+      />
+      <Arrow
+        index={3}
+        state="COLLISION"
+        orientation="BOTTOM"
+        coordinate={{ x: ARROW_SIZE * 5, y: ARROW_SIZE * 5 }}
+        onSelect={(value) => console.log({ value })}
+        rotation={180}
+      />

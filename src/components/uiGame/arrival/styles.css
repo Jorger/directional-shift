@@ -10,3 +10,20 @@
   width: var(--arrow-size);
   position: absolute;
 }
+
+button.arrival {
+  border: none;
+  cursor: pointer;
+}
+
+button.arrival.selected {
+  box-shadow: blue 0px 0px 0px var(--arrow--shadow-1),
+    blueviolet 0px 0px 0px var(--arrow--shadow-2);
+  background: white;
+}
+
+button.arrival.highlight {
+  box-shadow: inset red 0px 0px 0px var(--arrow--shadow-1),
+    inset orange 0px 0px 0px var(--arrow--shadow-2);
+  background: white;
+}

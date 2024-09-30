@@ -1,9 +1,10 @@
 export const BASE_HEIGHT = 732;
 export const BASE_WIDTH = 412;
-export const ARROW_SIZE = 60;
+export const ARROW_SIZE = 52;
 export const LINE_SIZE = Math.round(ARROW_SIZE * 0.08);
 export const STOPPER_SIZE = Math.round(ARROW_SIZE * 0.25);
 
+// TODO: revisar si puede ser la misma interfaz de ELineOrigin
 export enum EOrietantation {
   BOTTOM = "BOTTOM",
   LEFT = "LEFT",
@@ -16,11 +17,25 @@ export enum ELineScale {
   scaleY = "scaleY",
 }
 
+// TODO: revisar si puede ser la misma interfaz de EOrietantation
 export enum ELineOrigin {
   left = "left",
   right = "right",
   top = "top",
   bottom = "bottom",
+}
+
+export enum EStateArrow {
+  IDLE = "IDLE",
+  FINISH = "FINISH",
+  COLLISION = "COLLISION",
+  MOVEMENT = "MOVEMENT",
+}
+
+export enum ELineFinish {
+  "NEXT" = "NEXT",
+  "STOPPER" = "STOPPER",
+  "ARRIVAL" = "ARRIVAL",
 }
 
 // Variables CSS globales del juego...
@@ -29,7 +44,7 @@ document.documentElement.style.setProperty("--base-width", `${BASE_WIDTH}px`);
 document.documentElement.style.setProperty("--arrow-size", `${ARROW_SIZE}px`);
 document.documentElement.style.setProperty(
   "--arrow-f-size",
-  `${Math.round(ARROW_SIZE * 0.8)}px`
+  `${Math.round(ARROW_SIZE * 0.33)}px`
 );
 
 document.documentElement.style.setProperty(

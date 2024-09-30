@@ -1,0 +1,98 @@
+.editor {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  /* background: red; */
+}
+
+.editor-btns {
+  position: absolute;
+  /* border: 1px solid red; */
+  top: 0;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.editor-container-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.2;
+}
+
+/* .editor .stopper:not(.selected),
+.editor .arrow:not(.selected),
+.editor .line:not(.selected),
+.editor .arrival:not(.selected) {
+  opacity: 0.5;
+} */
+
+.editor .stopper,
+.editor .arrow,
+.editor .line,
+.editor .arrival {
+  opacity: 0.3;
+}
+
+.editor .stopper:hover,
+.editor .arrow:hover,
+.editor .line:hover,
+.editor .arrival:hover {
+  opacity: 0.8;
+}
+
+.editor-options {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* border: 1px solid red; */
+  padding: 10px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editor-options input {
+  width: 60px;
+}
+
+.editor-arrow-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .editor-arrow-options select {
+  height: 30px;
+} */
+
+.editor-range {
+  display: flex;
+  color: white;
+}
+
+.editor-label {
+  display: flex;
+  position: absolute;
+  background: white;
+  color: black;
+  width: 50px;
+  /* height: 15px; */
+  /* border-radius: 50%; */
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  font-size: 10px;
+  opacity: 0.2;
+}
+
+.editor-label:hover {
+  opacity: 1;
+  z-index: 11;
+}
