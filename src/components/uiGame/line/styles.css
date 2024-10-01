@@ -9,7 +9,7 @@
   );
 
   /* TODO: la velocidad debe ser configurable */
-  transition: transform 0.3s ease;
+  transition: transform var(--speed) ease;
 }
 
 .line.vertical {
@@ -28,9 +28,9 @@ button.line {
 }
 
 button.line.selected {
-  background: white;
+  background: red;
 }
 
 button.line.highlight {
-  background: red;
+  background: blue;
 }
