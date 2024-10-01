@@ -4,6 +4,7 @@ import {
   ELineScale,
   EOrietantation,
   EStateArrow,
+  ETypeAnimation,
 } from "../utils/constants";
 
 export type TOrietantation = keyof typeof EOrietantation;
@@ -11,6 +12,7 @@ export type TLineScale = keyof typeof ELineScale;
 export type TLineOrigin = keyof typeof ELineOrigin;
 export type TStateArrow = keyof typeof EStateArrow;
 export type TLineFinish = keyof typeof ELineFinish;
+export type TTypeAnimation = keyof typeof ETypeAnimation;
 
 export interface ILineTranform {
   scale: TLineScale;
@@ -40,6 +42,7 @@ export interface Iline {
   finish: TLineFinish;
   // Para quitar el elemento del dom
   visible?: boolean;
+  // indexArrow?: number;
   // fullStop: ICoordinate;
 }
 
@@ -55,10 +58,20 @@ export interface IStopper {
   visible?: boolean;
 }
 
+export interface ITargetPositions {
+  coordinate: ICoordinate;
+  orientation: TOrietantation;
+}
+
 export interface IPathArrow {
   arrow: IArrow;
   indexLines: number[];
+  targetPositions: ITargetPositions[];
+  // Creo que indexArrival ya no se va a necesitar...
   indexArrival: number;
+  counterTarget?: number;
+  // Para saber si el arrow ha llegado a su destino...
+  arrivesDestination?: boolean;
 }
 
 export interface ILevel {
@@ -67,3 +80,15 @@ export interface ILevel {
   stoppers: IStopper[];
   arrivals: IArrival[];
 }
+
+export interface IAnimate {
+  isAnimate: boolean;
+  typeAnimation: TTypeAnimation;
+  arrowIndex: number;
+  isCollision: boolean;
+  reachesTarget: boolean;
+  animationRef: React.RefObject<HTMLButtonElement> | null;
+}
+
+export type TValueOrientation = Record<TOrietantation, number>;
+export type TAngleOrietantion = Record<TOrietantation, TValueOrientation>;

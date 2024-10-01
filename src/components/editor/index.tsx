@@ -24,6 +24,7 @@ import type {
   Iline,
   IPathArrow,
   IStopper,
+  ITargetPositions,
   TLineFinish,
   TLineOrigin,
   TLineScale,
@@ -31,7 +32,15 @@ import type {
 } from "../../interfaces";
 import { copyToClipboard } from "../../utils/helpers";
 
-type TArrowLinks = Record<number, { lines: number[]; arrival: number }>;
+interface IPosition {
+  coordinate: ICoordinate;
+  orientation: TOrietantation;
+}
+
+type TArrowLinks = Record<
+  number,
+  { lines: number[]; arrival: number; positions: IPosition[] }
+>;
 
 const fillArray = (length = 1) => Array.from({ length }, (_, index) => index);
 
@@ -42,6 +51,41 @@ const ROTATION: Record<TOrietantation, number> = {
   LEFT: 270,
   RIGHT: 90,
   BOTTOM: 180,
+};
+
+interface IArrowGhost {
+  index: number;
+  orientation: TOrietantation;
+  coordinate: ICoordinate;
+  isSelected?: boolean;
+  indexArrow?: number;
+}
+
+interface ArrowGhostProps extends IArrowGhost {
+  onSelect: (index: number) => void;
+}
+
+const ArrowGhost = ({
+  index = 0,
+  orientation = EOrietantation.TOP,
+  coordinate,
+  isSelected = false,
+  onSelect,
+}: ArrowGhostProps) => {
+  return (
+    <button
+      className={`editor-arrow-ghost ${isSelected ? "selected" : ""}`}
+      style={{
+        width: ARROW_SIZE,
+        height: ARROW_SIZE,
+        left: coordinate.x,
+        top: coordinate.y,
+      }}
+      onClick={() => onSelect(index)}
+    >
+      {orientation}
+    </button>
+  );
 };
 
 interface RangeProps {
@@ -304,6 +348,7 @@ const RenderSelectElements = ({ handleAction }: RenderSelectElementsProps) => (
         {type}
       </button>
     ))}
+    <button onClick={() => handleAction("ghost")}>Ghost</button>
     <ImageUploader handleImage={(image) => handleAction("image", image)} />
     <button onClick={() => handleAction("save")}>Save</button>
   </div>
@@ -366,6 +411,12 @@ const Editor = () => {
   const [arrivals, setArrivals] = useState<IArrival[]>([]);
   const [stoppers, setStoppers] = useState<IStopper[]>([]);
   const [lines, setLines] = useState<Iline[]>([]);
+
+  // Donde se guarda la data a donde irán los arrows...
+  const [arrowsGhost, setArrowsGhost] = useState<IArrowGhost[]>([]);
+
+  // const [lines, setLines] = useState<Iline[]>([]);
+
   // Para guardar la relación del arrow con las líneas y el punto final.
   const [arrowsLinks, setArrowsLinks] = useState<TArrowLinks>({});
 
@@ -375,13 +426,48 @@ const Editor = () => {
   });
 
   const handleAction = (action = "", image = "") => {
+    if (action === "ghost") {
+      const indexArrowsGhost = arrowsGhost.length;
+
+      const newArrowsGhost: IArrowGhost = {
+        index: indexArrowsGhost,
+        orientation: EOrietantation.TOP,
+        coordinate: {
+          x: BASE_WIDTH / 2 - ARROW_SIZE / 2,
+          y: BASE_HEIGHT / 2 - ARROW_SIZE / 2,
+        },
+        indexArrow: -1,
+      };
+
+      const copyArrowsGhost = cloneDeep(arrowsGhost);
+      copyArrowsGhost.push(newArrowsGhost);
+
+      setArrowsGhost(copyArrowsGhost);
+
+      setEelectElement({ type: action, index: indexArrowsGhost });
+    }
+
     if (action === "save") {
       const newArrows: IPathArrow[] = [];
 
       for (let i = 0; i < arrows.length; i++) {
+        const newTargetPositions: ITargetPositions[] = arrowsGhost
+          .filter((v) => v.indexArrow === i)
+          .map(({ coordinate, orientation }) => ({
+            coordinate,
+            orientation,
+          }));
+
+        // La coordenada final...
+        newTargetPositions.push({
+          coordinate: arrivals[i].coordinate,
+          orientation: EOrietantation.LEFT,
+        });
+
         newArrows.push({
           arrow: arrows[i],
           indexLines: arrowsLinks[i].lines,
+          targetPositions: newTargetPositions,
           indexArrival: i,
         });
       }
@@ -394,14 +480,26 @@ const Editor = () => {
       };
       console.log("CREAR LA DATA PARA EL NIVEL");
 
-      // console.log(newLevel);
+      console.log("newLevel: ", newLevel);
 
-      copyToClipboard(JSON.stringify(newLevel));
-      // console.log(arrows);
-      // console.log(lines);
-      // console.log(arrivals);
-      // console.log(stoppers);
-      // console.log(arrowsLinks);
+      const saveLevel = {
+        newLevel,
+        arrows,
+        lines,
+        arrivals,
+        stoppers,
+        arrowsLinks,
+        arrowsGhost,
+      };
+
+      copyToClipboard(JSON.stringify(saveLevel));
+
+      console.log("arrows: ", arrows);
+      console.log("lines: ", lines);
+      console.log("arrivals: ", arrivals);
+      console.log("stoppers: ", stoppers);
+      console.log("arrowsLinks: ", arrowsLinks);
+      console.log("arrowsGhost: ", arrowsGhost);
     }
 
     if (action === "Arrow") {
@@ -433,6 +531,7 @@ const Editor = () => {
       copyArrowsLinks[indexArrow] = {
         lines: [],
         arrival: -1,
+        positions: [],
       };
 
       setArrowsLinks(copyArrowsLinks);
@@ -540,6 +639,13 @@ const Editor = () => {
       // @ts-ignore
       copy[selectElement.index].coordinate[axis] = value;
       setLines(copy);
+    }
+
+    if (type === "ghost") {
+      const copy = cloneDeep(arrowsGhost);
+      // @ts-ignore
+      copy[selectElement.index].coordinate[axis] = value;
+      setArrowsGhost(copy);
     }
   };
 
@@ -678,7 +784,29 @@ const Editor = () => {
     }
   };
 
-  // console.log(arrowsLinks);
+  const handleOrientationGhost = (index = 0, orientation: TOrietantation) => {
+    const copy = cloneDeep(arrowsGhost);
+    copy[index].orientation = orientation;
+    setArrowsGhost(copy);
+  };
+
+  const handleIndexArrowGhost = (index = 0, newIndexArrow: number) => {
+    const copy = cloneDeep(arrowsGhost);
+    copy[index].indexArrow = newIndexArrow;
+
+    setArrowsGhost(copy);
+
+    // if (arrowsLinks[newIndexArrow]) {
+    //   const copyArrowsLinks = cloneDeep(arrowsLinks);
+
+    //   copyArrowsLinks[newIndexArrow].positions.push({
+    //     coordinate: copy[index].coordinate,
+    //     orientation: copy[index].orientation,
+    //   });
+
+    //   setArrowsLinks(copyArrowsLinks);
+    // }
+  };
 
   const selectCoordinate =
     selectElement.type !== ""
@@ -688,7 +816,9 @@ const Editor = () => {
         ? arrivals[selectElement.index].coordinate
         : selectElement.type === "Stopper"
         ? stoppers[selectElement.index].coordinate
-        : lines[selectElement.index].coordinate
+        : selectElement.type === "Line"
+        ? lines[selectElement.index].coordinate
+        : arrowsGhost[selectElement.index].coordinate
       : { x: 0, y: 0 };
 
   const totalArrows = arrows.length;
@@ -739,6 +869,12 @@ const Editor = () => {
               isSelected={
                 selectElement.type === "Line" &&
                 selectElement.index === line.index
+              }
+              highlight={
+                !(
+                  selectElement.type === "Line" &&
+                  selectElement.index === line.index
+                )
               }
               {...line}
               onSelect={(value) => {
@@ -813,6 +949,30 @@ const Editor = () => {
         );
       })}
 
+      {arrowsGhost.map((ghost) => {
+        return (
+          <React.Fragment key={ghost.index}>
+            <ShowIndexLabel
+              coordinate={{
+                x: ghost.coordinate.x,
+                y: ghost.coordinate.y - 20,
+              }}
+              value={`${ghost.index}|${ghost.indexArrow}`}
+            />
+            <ArrowGhost
+              {...ghost}
+              isSelected={
+                selectElement.type === "ghost" &&
+                selectElement.index === ghost.index
+              }
+              onSelect={(value) => {
+                setEelectElement({ type: "ghost", index: value });
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
+
       <div className="editor-options">
         {selectElement.type === "Arrow" && (
           <RenderOptionsArrow
@@ -828,7 +988,7 @@ const Editor = () => {
             }
           />
         )}
-        {["Arrival", "Stopper"].includes(selectElement.type) && (
+        {["Arrival", "Stopper", "ghost"].includes(selectElement.type) && (
           <React.Fragment>
             <Positions
               coordinate={selectCoordinate}
@@ -836,6 +996,33 @@ const Editor = () => {
                 handlePositionElement(selectElement.type, axis, value);
               }}
             />
+            {selectElement.type === "ghost" && (
+              <React.Fragment>
+                <select
+                  onChange={(e) =>
+                    handleOrientationGhost(
+                      selectElement.index,
+                      e.target.value as TOrietantation
+                    )
+                  }
+                  value={arrowsGhost[selectElement.index].orientation}
+                >
+                  {Object.keys(EOrietantation).map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <RenderIndexArrow
+                  indexArrow={arrowsGhost[selectElement.index].indexArrow ?? -1}
+                  totalArrows={totalArrows}
+                  handleChangeValue={(value) =>
+                    handleIndexArrowGhost(selectElement.index, +value)
+                  }
+                />
+              </React.Fragment>
+            )}
+
             {/* {selectElement.type === "Arrival" && (
               <RenderIndexArrow
                 indexArrow={indexArrowRender}

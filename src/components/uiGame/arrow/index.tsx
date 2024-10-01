@@ -1,10 +1,11 @@
 import "./styles.css";
 import { EOrietantation, EStateArrow } from "../../../utils/constants";
+import { useRef } from "react";
 import type { IArrow } from "../../../interfaces";
 
 interface ArrowProps extends IArrow {
   isSelected?: boolean;
-  onSelect: (index: number) => void;
+  onSelect: (index: number, ref?: React.RefObject<HTMLButtonElement>) => void;
 }
 
 const Arrow = ({
@@ -16,6 +17,8 @@ const Arrow = ({
   isSelected = false,
   onSelect,
 }: ArrowProps) => {
+  const ref = useRef<HTMLButtonElement>(null);
+
   /**
    * Clases que cambian el UI del arrow...
    */
@@ -36,10 +39,11 @@ const Arrow = ({
 
   return (
     <button
+      ref={ref}
       className={className}
       style={style}
       disabled={disabled}
-      onClick={() => onSelect(index)}
+      onClick={() => onSelect(index, ref)}
     />
   );
 };
