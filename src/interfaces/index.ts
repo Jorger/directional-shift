@@ -4,6 +4,7 @@ import {
   ELineScale,
   EOrietantation,
   EStateArrow,
+  ETypeActionGame,
   ETypeAnimation,
 } from "../utils/constants";
 
@@ -13,6 +14,7 @@ export type TLineOrigin = keyof typeof ELineOrigin;
 export type TStateArrow = keyof typeof EStateArrow;
 export type TLineFinish = keyof typeof ELineFinish;
 export type TTypeAnimation = keyof typeof ETypeAnimation;
+export type TTypeActionGame = keyof typeof ETypeActionGame;
 
 export interface ILineTranform {
   scale: TLineScale;
@@ -56,6 +58,7 @@ export interface IStopper {
   coordinate: ICoordinate;
   // Se quita del dom cuando no es necesario...
   visible?: boolean;
+  indexLine?: number;
 }
 
 export interface ITargetPositions {
@@ -86,9 +89,15 @@ export interface IAnimate {
   typeAnimation: TTypeAnimation;
   arrowIndex: number;
   isCollision: boolean;
-  reachesTarget: boolean;
+  // reachesTarget: boolean;
   animationRef: React.RefObject<HTMLButtonElement> | null;
 }
 
 export type TValueOrientation = Record<TOrietantation, number>;
 export type TAngleOrietantion = Record<TOrietantation, TValueOrientation>;
+
+export interface IGameOver {
+  isGameOver: boolean;
+  showModal: boolean;
+  isSucces: boolean;
+}

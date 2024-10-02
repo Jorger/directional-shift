@@ -1,12 +1,157 @@
-import cloneDeep from "lodash.clonedeep";
-import type { IAnimate, Iline, IPathArrow, IStopper } from "../../interfaces";
 import {
   ANGLE_ORIENTATION,
+  ARROW_SIZE,
   ELineFinish,
+  ELineOrigin,
+  EOrietantation,
   EStateArrow,
   ETypeAnimation,
 } from "../../utils/constants";
 import calculateCollision from "./checkCollisions";
+import cloneDeep from "lodash.clonedeep";
+import type {
+  IAnimate,
+  ICoordinate,
+  IGameOver,
+  Iline,
+  IPathArrow,
+  IStopper,
+} from "../../interfaces";
+
+/**
+ * Validar si un arrow colisiona con otro arrow,
+ * si hay colision devuleve la posición hasta donde debe llegar
+ * así como el scale de la línea
+ */
+const validateColision = (
+  indexArrow: number,
+  arrows: IPathArrow[],
+  target: ICoordinate,
+  line: Iline
+) => {
+  /**
+   * El valor de escalamiento de la línea, cuando es 0 es que va de 1 a 0
+   * de esta forma se muestra la animación de cambio de tamaño de la línea...
+   */
+  let scaleLine = 0;
+
+  /**
+   * Se extrae sólo las coordenadas actuales de la caja (arrow) que se moverá
+   */
+  const movingBox = {
+    x: arrows[indexArrow].arrow.coordinate.x,
+    y: arrows[indexArrow].arrow.coordinate.y,
+  };
+
+  /**
+   * Se expecífica el vlaor de las demás cajas con las que se valida si hay
+   * colsión, se excluye la caja que se esta moviendo
+   */
+  const otherBoxes = arrows
+    .filter((_, i) => i !== indexArrow)
+    .map((arrow) => ({
+      x: arrow.arrow.coordinate.x,
+      y: arrow.arrow.coordinate.y,
+    }));
+
+  const { colission, x, y } = calculateCollision(
+    movingBox,
+    otherBoxes,
+    target.x,
+    target.y
+  );
+
+  /**
+   * Si hay colisión se compesa la posición...
+   */
+  if (colission) {
+    const lineOrigin = line.transform.origin;
+    const { orientation } = arrows[indexArrow].arrow;
+    let newX = x;
+    let newY = y;
+
+    const isHorizontal =
+      orientation === EOrietantation.LEFT ||
+      orientation === EOrietantation.RIGHT;
+
+    /**
+     * Guarda el valor de diferencia entre las posiciones para calcular
+     * el scale de la línea para la animación,
+     * se hace antes de modificar el valor del target...
+     */
+    const diferenceGlobalPosition = isHorizontal
+      ? Math.abs(movingBox.x - target.x)
+      : Math.abs(movingBox.y - target.y);
+
+    /**
+     * Se establece la posición a donde llegará el arrow
+     */
+    if (isHorizontal) {
+      newX += ARROW_SIZE * (orientation === EOrietantation.RIGHT ? 1 : -1);
+    } else {
+      newY += ARROW_SIZE * (orientation === EOrietantation.BOTTOM ? 1 : -1);
+    }
+
+    /**
+     * Se obtiene la diferencia hasta donde llega el arrow en la colisión...
+     */
+    const diferenceCollision = isHorizontal
+      ? Math.abs(movingBox.x - newX)
+      : Math.abs(movingBox.y - newY);
+
+    /**
+     * Se cálcula el valor de scale de la línea...
+     */
+    scaleLine = +(diferenceCollision / diferenceGlobalPosition).toFixed(2);
+
+    /**
+     * Se compesa el valor dependiendo de la dirección...
+     */
+    if (lineOrigin === ELineOrigin.right || lineOrigin === ELineOrigin.top) {
+      scaleLine = 1 - scaleLine;
+    }
+
+    /**
+     * Se establecen los nuevos valores a los cuales irá el arrow...
+     */
+    target.x = newX;
+    target.y = newY;
+  }
+
+  return { colission, target, scaleLine };
+};
+
+interface ValidateCompletedLevel {
+  arrows: IPathArrow[];
+  setGameOver: React.Dispatch<React.SetStateAction<IGameOver>>;
+}
+
+/**
+ * Validar si todos los arrrows están en su punto de destino...
+ */
+const validateCompletedLevel = ({
+  arrows,
+  setGameOver,
+}: ValidateCompletedLevel) => {
+  /**
+   * Se obtiene el total de arrows para así saber si todos están terminados...
+   */
+  const totalArrows = arrows.length;
+
+  /**
+   * Validar los arrows que han llegado al final...
+   */
+  const arrowsArrivalPoint = arrows.filter(
+    (value) => value.arrow.state === EStateArrow.FINISH
+  ).length;
+
+  /**
+   * Valida si todos los arrows han llegado a su destino...
+   */
+  if (totalArrows === arrowsArrivalPoint) {
+    setGameOver({ isGameOver: true, showModal: false, isSucces: true });
+  }
+};
 
 /**
  * Función que serializa la información de los arrows
@@ -90,9 +235,6 @@ export const validateClickArrow = ({
    */
   if (arrows[index].arrivesDestination) return;
 
-  // console.log(arrows[index]);
-  // console.log(arrowRef?.current);
-
   /**
    * Se clona el valor de arrows para modificar...
    */
@@ -108,26 +250,21 @@ export const validateClickArrow = ({
    */
   const { indexLines, targetPositions, counterTarget = 0 } = copyArrows[index];
 
-  const test = calculateCollision(
-    {
-      x: copyArrows[index].arrow.coordinate.x,
-      y: copyArrows[index].arrow.coordinate.x,
-    },
-    copyArrows.map((arrow) => ({
-      x: arrow.arrow.coordinate.x,
-      y: arrow.arrow.coordinate.y,
-    })),
-    targetPositions[counterTarget].coordinate.x,
-    targetPositions[counterTarget].coordinate.y
-  );
-
-  console.log({ test });
-
   /**
-   * El valor a donde debe llegar el elemento...
+   * Índice de la línea que se moverá...
    */
-  // TODO: este valor puede cambiar por que se debe validar si hay colisión...
-  const targetCoordinate = targetPositions[counterTarget].coordinate;
+  const indexLineTarget = indexLines[counterTarget];
+
+  const {
+    colission: isCollision,
+    target: targetCoordinate,
+    scaleLine,
+  } = validateColision(
+    index,
+    copyArrows,
+    targetPositions[counterTarget].coordinate,
+    copyLines[indexLineTarget]
+  );
 
   /**
    * Establecer el nuevo valor de posición del arrow
@@ -135,25 +272,11 @@ export const validateClickArrow = ({
   copyArrows[index].arrow.coordinate = targetCoordinate;
 
   /**
-   * Índice de la línea que se moverá...
-   */
-  const indexLineTarget = indexLines[counterTarget];
-
-  /**
    * Establecer el cambio de la línea, en este caso para que haga la
    * animación de movimiento, en teoría ya está todo de la dirección
    * que viene desde el editor...
    */
-  // TODO: no siempre será cero por que puede ser que hay colisión,
-  // por lo tanto este valor depende hasta donde debe llegar la línea si hay
-  // colisión...
-  copyLines[indexLineTarget].value = 0;
-
-  // console.log({ targetCoordinate, targetPositions, indexLines, counterTarget });
-  /**
-   * El total de posciones de destino para validar que no se exceda el valor...
-   */
-  // const totalTargets = targetPositions.length;
+  copyLines[indexLineTarget].value = scaleLine;
 
   /**
    * Establecer el cambio de estados...
@@ -168,9 +291,8 @@ export const validateClickArrow = ({
     isAnimate: true,
     typeAnimation: ETypeAnimation.MOVE,
     arrowIndex: index,
-    // TODO: validar...
-    reachesTarget: false,
-    isCollision: false,
+    // reachesTarget: false,
+    isCollision,
     animationRef: arrowRef || null,
   });
 };
@@ -180,30 +302,50 @@ interface ValidateNextMovement {
   runAnimation: IAnimate;
   lines: Iline[];
   setArrows: React.Dispatch<React.SetStateAction<IPathArrow[]>>;
+  setGameOver: React.Dispatch<React.SetStateAction<IGameOver>>;
   setLines: React.Dispatch<React.SetStateAction<Iline[]>>;
   setRunAnimation: React.Dispatch<React.SetStateAction<IAnimate>>;
+  setStoppers: React.Dispatch<React.SetStateAction<IStopper[]>>;
 }
 
+/**
+ * Función que valida el movimiento siguiente del arrow...
+ * @param param0
+ */
 export const validateNextMovement = ({
   arrows,
   runAnimation,
   lines,
   setArrows,
+  setGameOver,
   setLines,
   setRunAnimation,
+  setStoppers,
 }: ValidateNextMovement) => {
   const copyRunAnimation = cloneDeep(runAnimation);
   const copyArrows = cloneDeep(arrows);
   const copyLines = cloneDeep(lines);
 
-  // console.log(runAnimation);
-
-  // debugger;
-
   /**
    * La data de la animación que se está haciendo...
    */
-  const { arrowIndex, typeAnimation } = copyRunAnimation;
+  const { arrowIndex, typeAnimation, isCollision } = copyRunAnimation;
+
+  if (isCollision) {
+    /**
+     * Para indicar que el juego ha acabado y se indica que no tuvo éxito...
+     */
+    setGameOver({ isGameOver: true, showModal: false, isSucces: false });
+
+    /**
+     * Esrablecer el estado de colisión para el arrow...
+     */
+    copyArrows[arrowIndex].arrow.state = EStateArrow.COLLISION;
+    setArrows(copyArrows);
+
+    copyRunAnimation.isAnimate = false;
+    return setRunAnimation(copyRunAnimation);
+  }
 
   /**
    * Obtener la data del arrow animado...
@@ -232,7 +374,6 @@ export const validateNextMovement = ({
    * Si era del tipo de movimiento, se quita la línea del DOM...
    */
   if (typeAnimation === ETypeAnimation.MOVE) {
-    // console.log("INGRESA ACÁ POR QUE ERA D EMOVIMIENTO y quita la línea");
     /**
      * El índice de la línea que se ha movido, con este se puede
      * establecer que la línea no es visible para quitarla del DOM...
@@ -287,67 +428,72 @@ export const validateNextMovement = ({
     // Se deb incrementar el contador del arrow y pasar al siguiente target...
     // const totalTarget = targetPositions.length;
     if (currentLineFinish === ELineFinish.NEXT) {
-      const nextCoordinate = targetPositions[nextCounterTarget].coordinate;
-      copyArrows[arrowIndex].arrow.coordinate = nextCoordinate;
-
-      copyArrows[arrowIndex].counterTarget = nextCounterTarget;
-
       /**
        * Obtener el valor final de la línea...
        */
       const nextIndexLine = indexLines[nextCounterTarget];
 
-      // TODO: Validar colisiones...
-      copyLines[nextIndexLine].value = 0;
+      const {
+        colission,
+        target: nextCoordinate,
+        scaleLine,
+      } = validateColision(
+        arrowIndex,
+        copyArrows,
+        targetPositions[nextCounterTarget].coordinate,
+        copyLines[nextIndexLine]
+      );
+
+      copyArrows[arrowIndex].arrow.coordinate = nextCoordinate;
+      copyArrows[arrowIndex].counterTarget = nextCounterTarget;
+      copyLines[nextIndexLine].value = scaleLine;
 
       setLines(copyLines);
 
       copyRunAnimation.typeAnimation = ETypeAnimation.MOVE;
 
-      const test = calculateCollision(
-        {
-          x: copyArrows[arrowIndex].arrow.coordinate.x,
-          y: copyArrows[arrowIndex].arrow.coordinate.x,
-        },
-        copyArrows.map((arrow) => ({
-          x: arrow.arrow.coordinate.x,
-          y: arrow.arrow.coordinate.y,
-        })),
-        targetPositions[nextCounterTarget].coordinate.x,
-        targetPositions[nextCounterTarget].coordinate.y
-      );
-
-      console.log("Valor de test: ", { test });
+      copyRunAnimation.isCollision = colission;
     }
 
     if (currentLineFinish === ELineFinish.STOPPER) {
       copyRunAnimation.isAnimate = false;
       copyArrows[arrowIndex].counterTarget = nextCounterTarget;
 
-      // TODO: acá se podría poder la validación para quitar el stopper
-      // pero se debe relacionar para saber a que stopper se hace referencia...
+      /**
+       * Para ocultar el stopper
+       */
+      setStoppers((current) => {
+        const copyStoppers = cloneDeep(current);
+        /**
+         * Buscar el indice de la línea que está asociado con el stopper
+         */
+        const stopperIndex = copyStoppers.findIndex(
+          (v) => v.indexLine === indexLine
+        );
+
+        /**
+         * Si existe el índice, ocultar el stopper del dom...
+         */
+        if (stopperIndex >= 0) {
+          copyStoppers[stopperIndex].visible = false;
+        }
+
+        return copyStoppers;
+      });
     }
 
     if (currentLineFinish === ELineFinish.ARRIVAL) {
       copyRunAnimation.isAnimate = false;
-      copyRunAnimation.reachesTarget = true;
+      // copyRunAnimation.reachesTarget = true;
       copyArrows[arrowIndex].arrow.state = EStateArrow.FINISH;
-      // console.log("LLEGO AL DESTINO!!");
+
+      /**
+       * Para validar si ha terminado de llevar todos los arrows...
+       */
+      validateCompletedLevel({ arrows: copyArrows, setGameOver });
     }
   }
 
-  // if (typeAnimation === ETypeAnimation.ROTATION) {
-  //   copyRunAnimation.isAnimate = false;
-  // }
-
   setArrows(copyArrows);
   setRunAnimation(copyRunAnimation);
-
-  // console.log({
-  //   arrowIndex,
-  //   typeAnimation,
-  //   arrowData,
-  //   currentOrientation,
-  //   orientationTarget,
-  // });
 };

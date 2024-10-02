@@ -1,11 +1,12 @@
-import { IAnimate, TAngleOrietantion } from "../interfaces";
+import { IAnimate, IGameOver, TAngleOrietantion } from "../interfaces";
 
 export const BASE_HEIGHT = 732;
 export const BASE_WIDTH = 412;
 export const ARROW_SIZE = 52;
 export const LINE_SIZE = Math.round(ARROW_SIZE * 0.08);
 export const STOPPER_SIZE = Math.round(ARROW_SIZE * 0.25);
-export const SPEED = "500ms";
+export const WAIT_SHOW_MODAL_GAME_OVER = 500;
+export const SPEED = "300ms";
 
 // TODO: revisar si puede ser la misma interfaz de ELineOrigin
 export enum EOrietantation {
@@ -13,6 +14,11 @@ export enum EOrietantation {
   LEFT = "LEFT",
   RIGHT = "RIGHT",
   TOP = "TOP",
+}
+
+export enum ETypeActionGame {
+  RESTART = "RESTART",
+  NEXTLEVEL = "NEXTLEVEL",
 }
 
 export enum ELineScale {
@@ -50,7 +56,7 @@ export const INITIAL_ANIMATION_DATA: IAnimate = {
   isAnimate: false,
   typeAnimation: ETypeAnimation.MOVE,
   isCollision: false,
-  reachesTarget: false,
+  // reachesTarget: false,
   arrowIndex: -1,
   animationRef: null,
 };
@@ -80,6 +86,76 @@ export const ANGLE_ORIENTATION: TAngleOrietantion = {
     RIGHT: 90,
     TOP: 0,
   },
+};
+
+export const INITIAL_DATA_GAME_OVER: IGameOver = {
+  isGameOver: false,
+  showModal: false,
+  isSucces: false,
+};
+
+export const MODAL_LABELS = {
+  gameOver: [
+    "Don't Give Up!",
+    "Almost got It!",
+    "Leeroy Jenkins!",
+    "Losing streak",
+    "I need vacation",
+    "Sayonara",
+    "Shape up",
+    "Now it's personal",
+    "I will have my vengance",
+    "Houston, we have a problem",
+    "No pain, no gain",
+    "Darkest before dawn",
+    "Don't try this at home",
+    "Don't go there",
+    "Spilled milk",
+    "Tearing me apart",
+    "To make matters worse",
+  ],
+  completed: [
+    "Wonderful Victory",
+    "You complete me",
+    "Miracle",
+    "Survivor",
+    "Look at me",
+    "Me, winning",
+    "Cinderella story",
+    "I did that",
+    "Ain't heard nothing yet",
+    "As planned",
+    "Woot",
+    "Dexterity 100",
+    "Me, winning",
+    "I'm on fire",
+    "For a fact",
+    "Pro gamer",
+    "Carpe diem",
+    "All in a day's work",
+    "To infinity",
+    "Perfection",
+    "Sanity restored",
+    "Got a good hand",
+    "Piece of cake",
+  ],
+};
+
+/**
+ * Configración para el componente de confetti
+ */
+export const CONFETTI_CONFIGURATION = {
+  angle: 90,
+  spread: 360,
+  startVelocity: 40,
+  elementCount: 80,
+  dragFriction: 0.12,
+  duration: 7000,
+  stagger: 3,
+  width: "10px",
+  height: "10px",
+  perspective: "500px",
+  colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"],
 };
 
 // Variables CSS globales del juego...

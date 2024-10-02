@@ -1,7 +1,7 @@
 import "./styles.css";
-import { Arrival, Arrow, Line, Stopper } from "../uiGame";
-import { INITIAL_ANIMATION_DATA } from "../../utils/constants";
-import { useEffect, useState } from "react";
+import { Modal, NavBar, RenderBlocks } from "./components";
+import { useCallback, useEffect, useState } from "react";
+import { useWait } from "../../hooks";
 import {
   getArrowsData,
   getLinesData,
@@ -9,44 +9,96 @@ import {
   validateClickArrow,
   validateNextMovement,
 } from "./helpers";
-import type { IAnimate, ILevel } from "../../interfaces";
+import {
+  ETypeActionGame,
+  INITIAL_ANIMATION_DATA,
+  INITIAL_DATA_GAME_OVER,
+  WAIT_SHOW_MODAL_GAME_OVER,
+} from "../../utils/constants";
+import type {
+  IAnimate,
+  IGameOver,
+  ILevel,
+  TTypeActionGame,
+} from "../../interfaces";
 
-const Game = ({ level }: { level: ILevel }) => {
+interface GameProps {
+  level: ILevel;
+  numLevel: number;
+  onChangeLevel: (action: TTypeActionGame) => void;
+}
+
+/**
+ * Componente principal del juego...
+ */
+const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
   /**
    * Para las flechas de movimiento...
    */
   const [arrows, setArrows] = useState(() => getArrowsData(level.arrows));
+  /**
+   * Para los valores de las líneas de juego...
+   */
   const [lines, setLines] = useState(() => getLinesData(level.lines));
-  // TODO: se deben relacionar los stoppers, para así poderlos ocultar...
-  // setStoppers
-  const [stoppers] = useState(() => getStoppersData(level.stoppers));
+  /**
+   * Para los Stoppers
+   */
+  const [stoppers, setStoppers] = useState(() =>
+    getStoppersData(level.stoppers)
+  );
 
+  /**
+   * Para controlar la animación...
+   */
   const [runAnimation, setRunAnimation] = useState<IAnimate>(
     INITIAL_ANIMATION_DATA
   );
 
-  useEffect(() => {
-    // console.log("runAnimation", runAnimation);
+  /**
+   * Determina si se ha acabado el juego...
+   */
+  const [gameOver, setGameOver] = useState<IGameOver>(INITIAL_DATA_GAME_OVER);
 
+  /**
+   * Para establecer el estado de pause del juego
+   */
+  const [isPause, setIsPause] = useState(false);
+
+  /**
+   * Efecto que escucha cuando existe una animación...
+   */
+  useEffect(() => {
+    /**
+     * Sólo se ejecuta cuando se establece que se está animando...
+     */
     if (runAnimation.isAnimate) {
       const runSync = async () => {
+        /**
+         * Validar si la animación ha terminado de ejecutar...
+         */
         const animations = runAnimation.animationRef?.current
           ?.getAnimations()
           .map((a) => a.finished);
 
         if (animations) {
+          /**
+           * Espera hasta que las animaciones ha terminado de ejecutar...
+           */
           await Promise.allSettled(animations);
-          // TODO: validar si hay colisión...
+
+          /**
+           * Una vez termina la animación, se valida el siguiente paso...
+           */
           validateNextMovement({
             arrows,
             runAnimation,
             lines,
             setArrows,
+            setGameOver,
             setLines,
             setRunAnimation,
+            setStoppers,
           });
-        } else {
-          console.log("NO DETECTA ANIMACIÓN :(");
         }
       };
 
@@ -54,11 +106,27 @@ const Game = ({ level }: { level: ILevel }) => {
     }
   }, [arrows, lines, runAnimation]);
 
+  /**
+   * Espera un tiempo antes de mostrar el modal del gameOver
+   */
+  useWait(
+    gameOver.isGameOver,
+    WAIT_SHOW_MODAL_GAME_OVER,
+    // Se usa el useCallback para evitar que la función se genere cada vez que renderiza el componente...
+    useCallback(
+      () => setGameOver((current) => ({ ...current, showModal: true })),
+      []
+    )
+  );
+
+  /**
+   * Función que valida cuando se hace click en el arrow...
+   */
   const handleClickArrow = (
     index = 0,
     arrowRef?: React.RefObject<HTMLButtonElement>
   ) => {
-    if (!runAnimation.isAnimate) {
+    if (!runAnimation.isAnimate && !gameOver.isGameOver) {
       validateClickArrow({
         arrowRef,
         arrows,
@@ -71,26 +139,48 @@ const Game = ({ level }: { level: ILevel }) => {
     }
   };
 
-  // level.arrivals
+  const handleAction = (action = "") => {
+    if (action === "home") {
+      console.log("IR AL LOBBY");
+    }
 
-  // console.log(arrows);
+    if (action === "undo") {
+      onChangeLevel(ETypeActionGame.RESTART);
+    }
+
+    if (action === "play") {
+      if (gameOver.isSucces) {
+        console.log("IR AL SIGUIENTE NIVEL");
+      } else {
+        setIsPause(false);
+      }
+    }
+  };
+
+  /**
+   * Props para los bloques del juego...
+   */
+  const propsRenderBlocks = {
+    lines,
+    stoppers,
+    arrivals: level.arrivals,
+    arrows,
+    handleClickArrow,
+  };
+
+  const propsModal = {
+    isVisible: gameOver.showModal || isPause,
+    isSucces: gameOver.isSucces,
+    isPause,
+    numLevel,
+    handleAction,
+  };
+
   return (
     <div className="game">
-      {/* Renderizar la líneas */}
-      {lines.map((line) => line.visible && <Line {...line} key={line.index} />)}
-      {/* Renderizar los stoppers */}
-      {stoppers.map(
-        (stopper) =>
-          stopper.visible && <Stopper {...stopper} key={stopper.index} />
-      )}
-      {/* Renderizar los arrivals, estos no cambian por ello no tienen estado */}
-      {level.arrivals.map((arrival) => (
-        <Arrival {...arrival} key={arrival.index} />
-      ))}
-      {/* Renderizar los arrows */}
-      {arrows.map(({ arrow }) => (
-        <Arrow {...arrow} key={arrow.index} onSelect={handleClickArrow} />
-      ))}
+      <Modal {...propsModal} />
+      <NavBar onPause={() => setIsPause(true)} />
+      <RenderBlocks {...propsRenderBlocks} />
     </div>
   );
 };

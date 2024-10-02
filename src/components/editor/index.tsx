@@ -410,7 +410,161 @@ const Editor = () => {
   const [arrows, setArrows] = useState<IArrow[]>([]);
   const [arrivals, setArrivals] = useState<IArrival[]>([]);
   const [stoppers, setStoppers] = useState<IStopper[]>([]);
-  const [lines, setLines] = useState<Iline[]>([]);
+  const [lines, setLines] = useState<Iline[]>([
+    {
+      index: 0,
+      coordinate: { x: 74, y: 214 },
+      height: 4,
+      width: 228,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 1,
+      coordinate: { x: 298, y: 214 },
+      height: 41,
+      width: 4,
+      transform: { scale: "scaleY", origin: "bottom" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 2,
+      coordinate: { x: 148, y: 251 },
+      height: 4,
+      width: 154,
+      transform: { scale: "scaleX", origin: "left" },
+      value: 1,
+      finish: "ARRIVAL",
+    },
+    {
+      index: 3,
+      coordinate: { x: 74, y: 289 },
+      height: 4,
+      width: 59,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 4,
+      coordinate: { x: 129, y: 289 },
+      height: 172,
+      width: 4,
+      transform: { scale: "scaleY", origin: "bottom" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 5,
+      coordinate: { x: 129, y: 458 },
+      height: 4,
+      width: 41,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "ARRIVAL",
+    },
+    {
+      index: 6,
+      coordinate: { x: 74, y: 364 },
+      height: 4,
+      width: 229,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "STOPPER",
+    },
+    {
+      index: 7,
+      coordinate: { x: 298, y: 364 },
+      height: 150,
+      width: 4,
+      transform: { scale: "scaleY", origin: "top" },
+      value: 1,
+      finish: "ARRIVAL",
+    },
+    {
+      index: 8,
+      coordinate: { x: 74, y: 438 },
+      height: 4,
+      width: 40,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 9,
+      coordinate: { x: 110, y: 383 },
+      height: 59,
+      width: 4,
+      transform: { scale: "scaleY", origin: "top" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 10,
+      coordinate: { x: 110, y: 382 },
+      height: 4,
+      width: 136,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 11,
+      coordinate: { x: 242, y: 382 },
+      height: 98,
+      width: 4,
+      transform: { scale: "scaleY", origin: "bottom" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 12,
+      coordinate: { x: 242, y: 476 },
+      height: 4,
+      width: 116,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 13,
+      coordinate: { x: 354, y: 289 },
+      height: 191,
+      width: 4,
+      transform: { scale: "scaleY", origin: "top" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 14,
+      coordinate: { x: 281, y: 289 },
+      height: 4,
+      width: 77,
+      transform: { scale: "scaleX", origin: "left" },
+      value: 1,
+      finish: "ARRIVAL",
+    },
+    {
+      index: 15,
+      coordinate: { x: 74, y: 513 },
+      height: 4,
+      width: 134,
+      transform: { scale: "scaleX", origin: "right" },
+      value: 1,
+      finish: "NEXT",
+    },
+    {
+      index: 16,
+      coordinate: { x: 204, y: 331 },
+      height: 186,
+      width: 4,
+      transform: { scale: "scaleY", origin: "top" },
+      value: 1,
+      finish: "ARRIVAL",
+    },
+  ]);
 
   // Donde se guarda la data a donde irán los arrows...
   const [arrowsGhost, setArrowsGhost] = useState<IArrowGhost[]>([]);
@@ -808,6 +962,12 @@ const Editor = () => {
     // }
   };
 
+  const handleStopperIndexLine = (index = 0, indexLine = 0) => {
+    const copyStoppers = cloneDeep(stoppers);
+    copyStoppers[index].indexLine = indexLine;
+    setStoppers(copyStoppers);
+  };
+
   const selectCoordinate =
     selectElement.type !== ""
       ? selectElement.type === "Arrow"
@@ -996,6 +1156,21 @@ const Editor = () => {
                 handlePositionElement(selectElement.type, axis, value);
               }}
             />
+            {
+              // onChange={(e) => onChange(+e.currentTarget.value)}
+              selectElement.type === "Stopper" && (
+                <input
+                  type="number"
+                  value={stoppers[selectElement.index].indexLine ?? -1}
+                  onChange={(e) =>
+                    handleStopperIndexLine(
+                      selectElement.index,
+                      +e.currentTarget.value
+                    )
+                  }
+                />
+              )
+            }
             {selectElement.type === "ghost" && (
               <React.Fragment>
                 <select
