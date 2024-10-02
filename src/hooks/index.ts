@@ -1,3 +1,4 @@
-import useWindowResize from './useWindowResize';
+import useWait from "./useWait";
+import useWindowResize from "./useWindowResize";
 
-export { useWindowResize };
+export { useWait, useWindowResize };

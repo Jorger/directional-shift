@@ -1,4 +1,4 @@
-import { ILevel } from "../../interfaces";
+import type { ILevel } from "../../interfaces";
 
 const newLevelTest: ILevel = {
   arrows: [
@@ -240,7 +240,7 @@ const newLevelTest: ILevel = {
       finish: "ARRIVAL",
     },
   ],
-  stoppers: [{ index: 0, coordinate: { x: 293, y: 359 } }],
+  stoppers: [{ index: 0, coordinate: { x: 293, y: 359 }, indexLine: 6 }],
   arrivals: [
     { index: 0, coordinate: { x: 124, y: 228 } },
     { index: 1, coordinate: { x: 143, y: 434 } },
@@ -249,6 +249,110 @@ const newLevelTest: ILevel = {
     { index: 4, coordinate: { x: 180, y: 303 } },
   ],
 };
+
+// const newLevelTest: ILevel = {
+//   arrows: [
+//     {
+//       arrow: {
+//         index: 0,
+//         orientation: "RIGHT",
+//         coordinate: { x: 45, y: 227 },
+//         state: "IDLE",
+//         rotation: 90,
+//       },
+//       indexLines: [0],
+//       targetPositions: [
+//         { coordinate: { x: 307, y: 227 }, orientation: "LEFT" },
+//       ],
+//       indexArrival: 0,
+//     },
+//     {
+//       arrow: {
+//         index: 1,
+//         orientation: "LEFT",
+//         coordinate: { x: 307, y: 227 },
+//         state: "IDLE",
+//         rotation: 270,
+//       },
+//       indexLines: [1],
+//       targetPositions: [{ coordinate: { x: 45, y: 227 }, orientation: "LEFT" }],
+//       indexArrival: 1,
+//     },
+//     {
+//       arrow: {
+//         index: 2,
+//         orientation: "TOP",
+//         coordinate: { x: 180, y: 533 },
+//         state: "IDLE",
+//         rotation: 0,
+//       },
+//       indexLines: [3],
+//       targetPositions: [
+//         { coordinate: { x: 180, y: 340 }, orientation: "LEFT" },
+//       ],
+//       indexArrival: 2,
+//     },
+//     {
+//       arrow: {
+//         index: 3,
+//         orientation: "BOTTOM",
+//         coordinate: { x: 180, y: 340 },
+//         state: "IDLE",
+//         rotation: 180,
+//       },
+//       indexLines: [2],
+//       targetPositions: [
+//         { coordinate: { x: 180, y: 533 }, orientation: "LEFT" },
+//       ],
+//       indexArrival: 3,
+//     },
+//   ],
+//   lines: [
+//     {
+//       index: 0,
+//       coordinate: { x: 78, y: 237 },
+//       height: 4,
+//       width: 261,
+//       transform: { scale: "scaleX", origin: "right" },
+//       value: 1,
+//       finish: "ARRIVAL",
+//     },
+//     {
+//       index: 1,
+//       coordinate: { x: 71, y: 261 },
+//       height: 4,
+//       width: 261,
+//       transform: { scale: "scaleX", origin: "left" },
+//       value: 1,
+//       finish: "ARRIVAL",
+//     },
+//     {
+//       index: 2,
+//       coordinate: { x: 195, y: 361 },
+//       height: 208,
+//       width: 4,
+//       transform: { scale: "scaleY", origin: "bottom" },
+//       value: 1,
+//       finish: "ARRIVAL",
+//     },
+//     {
+//       index: 3,
+//       coordinate: { x: 214, y: 363 },
+//       height: 202,
+//       width: 4,
+//       transform: { scale: "scaleY", origin: "top" },
+//       value: 1,
+//       finish: "ARRIVAL",
+//     },
+//   ],
+//   stoppers: [],
+//   arrivals: [
+//     { index: 0, coordinate: { x: 41, y: 340 } },
+//     { index: 1, coordinate: { x: 41, y: 445 } },
+//     { index: 2, coordinate: { x: 301, y: 340 } },
+//     { index: 3, coordinate: { x: 296, y: 460 } },
+//   ],
+// };
 
 // const newLevelTest: ILevel = {
 //   arrows: [

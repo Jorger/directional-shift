@@ -41,3 +41,59 @@ body {
 div {
   box-sizing: border-box;
 }
+
+/* Estilos para los botones */
+.button {
+  background: white;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 5px #d0d0d0;
+  color: #6d6d6d;
+  cursor: pointer;
+  margin-top: -5px;
+  outline: none;
+}
+
+.button:active {
+  box-shadow: 0 1px #d0d0d0;
+  transform: translateY(4px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.button.blue {
+  background: #02ccfe;
+  box-shadow: 0 8px #0099e2;
+  color: var(--white-cat);
+  text-align: center;
+}
+
+.button.blue:active {
+  box-shadow: 0 1px #0099e2;
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0);
+  }
+}
