@@ -10,6 +10,7 @@ import {
   EOrietantation,
   EStateArrow,
   LINE_SIZE,
+  STOPPER_SIZE,
 } from "../../utils/constants";
 import Arrival from "../uiGame/arrival";
 import cloneDeep from "lodash.clonedeep";
@@ -22,6 +23,7 @@ import type {
   ICoordinate,
   ILevel,
   Iline,
+  ILineTranform,
   IPathArrow,
   IStopper,
   ITargetPositions,
@@ -44,7 +46,8 @@ type TArrowLinks = Record<
 
 const fillArray = (length = 1) => Array.from({ length }, (_, index) => index);
 
-const TYPE_ELEMENTS = ["Arrow", "Line", "Arrival", "Stopper"];
+// const TYPE_ELEMENTS = ["Arrow", "Line", "Arrival", "Stopper"];
+const TYPE_ELEMENTS = ["Arrow", "Arrival"];
 
 const ROTATION: Record<TOrietantation, number> = {
   TOP: 0,
@@ -350,6 +353,8 @@ const RenderSelectElements = ({ handleAction }: RenderSelectElementsProps) => (
     ))}
     <button onClick={() => handleAction("ghost")}>Ghost</button>
     <ImageUploader handleImage={(image) => handleAction("image", image)} />
+    <button onClick={() => handleAction("Lines")}>Lines</button>
+    <button onClick={() => handleAction("Stoppers")}>Stoppers</button>
     <button onClick={() => handleAction("save")}>Save</button>
   </div>
 );
@@ -405,166 +410,244 @@ const getIndexArrow = (type = "", index = 0, arrowsLinks: TArrowLinks) => {
   return -1;
 };
 
+type TcoordinatesCompute = {
+  coordinate: ICoordinate;
+  orientation: TOrietantation;
+};
+
+// // handleAction
+const computeLines = (
+  arrows: IArrow[],
+  arrowsGhost: IArrowGhost[],
+  arrivals: IArrival[]
+) => {
+  let indexLine = 0;
+  const newLines: Iline[] = [];
+  const newArrowsLinks: TArrowLinks = {};
+
+  // console.log({ arrows, arrowsGhost, arrivals });
+  // Se iteran los arrows que hay en el escenario...
+  for (let i = 0; i < arrows.length; i++) {
+    /**
+     * Se guardan todas las coordenadas...
+     */
+    let coordiates: TcoordinatesCompute[] = [];
+    /**
+     * El arrow que se está evaluando.
+     */
+    const arrow = arrows[i];
+    /**
+     * Se obtiene la información del punto de llegada asociada al arrow...
+     */
+    const arrivalArrow = arrivals[i];
+
+    /*
+    La primera coorenada corrspondiente a la posición donde está el arrow
+     */
+    coordiates.push({
+      coordinate: arrow.coordinate,
+      orientation: arrow.orientation,
+    });
+
+    /**
+     * Ahora las coordenas de ghost
+     */
+    const ghostArrow: TcoordinatesCompute[] = arrowsGhost
+      .filter((v) => v.indexArrow === i)
+      .map((v) => ({
+        coordinate: v.coordinate,
+        orientation: v.orientation,
+      }));
+
+    /**
+     * Se agregan las coordenas donde están los puntos de tipo ghost para ese arrow...
+     */
+    coordiates = [...coordiates, ...ghostArrow];
+
+    /**
+     * Se agrega la coordenada final del punto de destino...
+     * La orientación no se tiene en cuenta
+     */
+    coordiates.push({
+      coordinate: arrivalArrow.coordinate,
+      orientation: EOrietantation.LEFT,
+    });
+
+    // Se crea el arrow link para este arrow
+    newArrowsLinks[i] = {
+      lines: [],
+      arrival: -1,
+      positions: [],
+    };
+
+    // console.log("el arrow es: ", arrow);
+    // console.log("el arrivalArrow es: ", arrivalArrow);
+    // console.log("Las coordenadas: ", coordiates);
+
+    /**
+     * Se interan las coordenadas para inferir la líneas
+     */
+    for (let c = 0; c < coordiates.length; c++) {
+      const indexNextCoordinate = c + 1;
+      const isFinalCoordinate = indexNextCoordinate === coordiates.length - 1;
+
+      const initial = coordiates[c];
+      const end = coordiates[indexNextCoordinate];
+
+      const initialCoordinate = initial.coordinate;
+      const initialOrientation = initial.orientation;
+
+      const endCoordinate = end.coordinate;
+      // const endOrientation = end.orientation;
+
+      const isHorizonal =
+        initialOrientation === "LEFT" || initialOrientation === "RIGHT";
+
+      let lineX = 0;
+      let lineY = 0;
+      // let lineSize = 0;
+      let lineWidth = LINE_SIZE;
+      let lineHeight = LINE_SIZE;
+
+      /**
+       * Para establecer el transform
+       */
+      const lineTransform: ILineTranform = {
+        scale: "scaleX",
+        origin: "left",
+      };
+
+      if (isHorizonal) {
+        lineWidth = Math.abs(initialCoordinate.x - endCoordinate.x) + LINE_SIZE;
+
+        if (initialOrientation === "RIGHT") {
+          lineX = initialCoordinate.x;
+          lineY = initialCoordinate.y;
+
+          lineTransform.scale = "scaleX";
+          lineTransform.origin = "right";
+        } else {
+          lineX = endCoordinate.x;
+          lineY = endCoordinate.y;
+
+          lineTransform.scale = "scaleX";
+          lineTransform.origin = "left";
+        }
+      } else {
+        lineHeight =
+          Math.abs(initialCoordinate.y - endCoordinate.y) + LINE_SIZE;
+
+        if (initialOrientation === "BOTTOM") {
+          lineX = initialCoordinate.x;
+          lineY = initialCoordinate.y;
+
+          lineTransform.scale = "scaleY";
+          lineTransform.origin = "bottom";
+        } else {
+          lineX = endCoordinate.x;
+          lineY = endCoordinate.y;
+
+          lineTransform.scale = "scaleY";
+          lineTransform.origin = "top";
+        }
+      }
+
+      // Para establecer la posición de la línea en el centro de la coordenada
+      lineX += Math.round(ARROW_SIZE / 2);
+      lineY += Math.round(ARROW_SIZE / 2);
+
+      const lineCoordinate: ICoordinate = { x: lineX, y: lineY };
+
+      const FinishLine = isFinalCoordinate
+        ? ELineFinish.ARRIVAL
+        : ELineFinish.NEXT;
+
+      // La base para una nueva línea
+      const newLine: Iline = {
+        index: indexLine,
+        coordinate: lineCoordinate,
+        height: lineHeight,
+        width: lineWidth,
+        transform: lineTransform,
+        value: 1,
+        finish: FinishLine,
+      };
+
+      newLines.push(newLine);
+
+      // Se guarda la relación de la línea con el arrow...
+      newArrowsLinks[i].lines.push(indexLine);
+
+      indexLine++;
+
+      // console.log({ initial, end, initialOrientation, isHorizonal });
+
+      if (isFinalCoordinate) {
+        break;
+      }
+    }
+  }
+
+  // console.log("newLines: ", newLines);
+
+  return { newLines, newArrowsLinks };
+};
+
+const computeStoppers = (lines: Iline[] = []) => {
+  // Obtener sólo las líneas que tenga el tipo setopper.
+  const stopperLines = lines.filter((v) => v.finish === "STOPPER");
+
+  // console.log({ stopperLines, STOPPER_SIZE });
+
+  const newStopper: IStopper[] = [];
+
+  for (let i = 0; i < stopperLines.length; i++) {
+    const line = stopperLines[i];
+    const { index: indexLine, coordinate, height, width, transform } = line;
+
+    const direction = transform.origin;
+
+    let newX = 0;
+    let newY = 0;
+
+    const isHorizontal = direction === "right" || direction === "left";
+
+    if (isHorizontal) {
+      newY = coordinate.y;
+      if (direction === "right") {
+        newX = coordinate.x + width - LINE_SIZE;
+      } else {
+        newX = coordinate.x;
+      }
+    } else {
+      newX = coordinate.x;
+
+      if (direction === "bottom") {
+        newY = coordinate.y + height - LINE_SIZE;
+      } else {
+        newY = coordinate.y;
+      }
+    }
+
+    newX = Math.floor(newX - STOPPER_SIZE / 3);
+    newY = Math.floor(newY - STOPPER_SIZE / 3);
+
+    newStopper.push({
+      index: i,
+      coordinate: { x: newX, y: newY },
+      indexLine,
+    });
+  }
+
+  return newStopper;
+};
+
 const Editor = () => {
   const [imageURL, setImageURL] = useState("");
   const [arrows, setArrows] = useState<IArrow[]>([]);
   const [arrivals, setArrivals] = useState<IArrival[]>([]);
   const [stoppers, setStoppers] = useState<IStopper[]>([]);
-  const [lines, setLines] = useState<Iline[]>([
-    {
-      index: 0,
-      coordinate: { x: 74, y: 214 },
-      height: 4,
-      width: 228,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 1,
-      coordinate: { x: 298, y: 214 },
-      height: 41,
-      width: 4,
-      transform: { scale: "scaleY", origin: "bottom" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 2,
-      coordinate: { x: 148, y: 251 },
-      height: 4,
-      width: 154,
-      transform: { scale: "scaleX", origin: "left" },
-      value: 1,
-      finish: "ARRIVAL",
-    },
-    {
-      index: 3,
-      coordinate: { x: 74, y: 289 },
-      height: 4,
-      width: 59,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 4,
-      coordinate: { x: 129, y: 289 },
-      height: 172,
-      width: 4,
-      transform: { scale: "scaleY", origin: "bottom" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 5,
-      coordinate: { x: 129, y: 458 },
-      height: 4,
-      width: 41,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "ARRIVAL",
-    },
-    {
-      index: 6,
-      coordinate: { x: 74, y: 364 },
-      height: 4,
-      width: 229,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "STOPPER",
-    },
-    {
-      index: 7,
-      coordinate: { x: 298, y: 364 },
-      height: 150,
-      width: 4,
-      transform: { scale: "scaleY", origin: "top" },
-      value: 1,
-      finish: "ARRIVAL",
-    },
-    {
-      index: 8,
-      coordinate: { x: 74, y: 438 },
-      height: 4,
-      width: 40,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 9,
-      coordinate: { x: 110, y: 383 },
-      height: 59,
-      width: 4,
-      transform: { scale: "scaleY", origin: "top" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 10,
-      coordinate: { x: 110, y: 382 },
-      height: 4,
-      width: 136,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 11,
-      coordinate: { x: 242, y: 382 },
-      height: 98,
-      width: 4,
-      transform: { scale: "scaleY", origin: "bottom" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 12,
-      coordinate: { x: 242, y: 476 },
-      height: 4,
-      width: 116,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 13,
-      coordinate: { x: 354, y: 289 },
-      height: 191,
-      width: 4,
-      transform: { scale: "scaleY", origin: "top" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 14,
-      coordinate: { x: 281, y: 289 },
-      height: 4,
-      width: 77,
-      transform: { scale: "scaleX", origin: "left" },
-      value: 1,
-      finish: "ARRIVAL",
-    },
-    {
-      index: 15,
-      coordinate: { x: 74, y: 513 },
-      height: 4,
-      width: 134,
-      transform: { scale: "scaleX", origin: "right" },
-      value: 1,
-      finish: "NEXT",
-    },
-    {
-      index: 16,
-      coordinate: { x: 204, y: 331 },
-      height: 186,
-      width: 4,
-      transform: { scale: "scaleY", origin: "top" },
-      value: 1,
-      finish: "ARRIVAL",
-    },
-  ]);
+  const [lines, setLines] = useState<Iline[]>([]);
 
   // Donde se guarda la data a donde irán los arrows...
   const [arrowsGhost, setArrowsGhost] = useState<IArrowGhost[]>([]);
@@ -580,6 +663,23 @@ const Editor = () => {
   });
 
   const handleAction = (action = "", image = "") => {
+    // Para calciular la posición de los Stoppers
+    if (action === "Stoppers") {
+      // console.log("infiere Stoppers");
+      setStoppers(computeStoppers(lines));
+    }
+
+    if (action === "Lines") {
+      // console.log("PARA COMPUTAR LAS LINEAS");
+      const { newLines, newArrowsLinks } = computeLines(
+        arrows,
+        arrowsGhost,
+        arrivals
+      );
+      setLines(newLines);
+      setArrowsLinks(newArrowsLinks);
+    }
+
     if (action === "ghost") {
       const indexArrowsGhost = arrowsGhost.length;
 
@@ -1008,6 +1108,46 @@ const Editor = () => {
       )}
       <RenderSelectElements handleAction={handleAction} />
 
+      {arrowsGhost.map((ghost) => {
+        return (
+          <React.Fragment key={ghost.index}>
+            <ShowIndexLabel
+              coordinate={{
+                x: ghost.coordinate.x,
+                y: ghost.coordinate.y - 20,
+              }}
+              value={`${ghost.index}|${ghost.indexArrow}`}
+            />
+            <ArrowGhost
+              {...ghost}
+              isSelected={
+                selectElement.type === "ghost" &&
+                selectElement.index === ghost.index
+              }
+              onSelect={(value) => {
+                setEelectElement({ type: "ghost", index: value });
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
+
+      {stoppers.map((stopper) => {
+        return (
+          <Stopper
+            key={stopper.index}
+            isSelected={
+              selectElement.type === "Stopper" &&
+              selectElement.index === stopper.index
+            }
+            {...stopper}
+            onSelect={(value) => {
+              setEelectElement({ type: "Stopper", index: value });
+            }}
+          />
+        );
+      })}
+
       {lines.map((line) => {
         const indexArrowLine = getIndexArrow("Line", line.index, arrowsLinks);
         const orderLine = getPositionLine(
@@ -1042,22 +1182,6 @@ const Editor = () => {
               }}
             />
           </React.Fragment>
-        );
-      })}
-
-      {stoppers.map((stopper) => {
-        return (
-          <Stopper
-            key={stopper.index}
-            isSelected={
-              selectElement.type === "Stopper" &&
-              selectElement.index === stopper.index
-            }
-            {...stopper}
-            onSelect={(value) => {
-              setEelectElement({ type: "Stopper", index: value });
-            }}
-          />
         );
       })}
 
@@ -1109,36 +1233,12 @@ const Editor = () => {
         );
       })}
 
-      {arrowsGhost.map((ghost) => {
-        return (
-          <React.Fragment key={ghost.index}>
-            <ShowIndexLabel
-              coordinate={{
-                x: ghost.coordinate.x,
-                y: ghost.coordinate.y - 20,
-              }}
-              value={`${ghost.index}|${ghost.indexArrow}`}
-            />
-            <ArrowGhost
-              {...ghost}
-              isSelected={
-                selectElement.type === "ghost" &&
-                selectElement.index === ghost.index
-              }
-              onSelect={(value) => {
-                setEelectElement({ type: "ghost", index: value });
-              }}
-            />
-          </React.Fragment>
-        );
-      })}
-
       <div className="editor-options">
         {selectElement.type === "Arrow" && (
           <RenderOptionsArrow
             coordinate={selectCoordinate}
             orientation={arrows[selectElement.index].orientation}
-            orderLines={arrowsLinks[selectElement.index].lines}
+            orderLines={arrowsLinks?.[selectElement.index]?.lines ?? []}
             handleOrientation={handleOrientationArrow}
             onChange={(axis, value) => {
               handlePositionElement("Arrow", axis, value);
