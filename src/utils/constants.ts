@@ -181,8 +181,12 @@ export const INITIAL_OPTIONS_GAME: IOptionsGame = {
 };
 
 export enum ESounds {
-  GAMER_OVER = "GAMER_OVER",
   CLICK = "CLICK",
+  CLICK_ARROW = "CLICK_ARROW",
+  ARRIVAL = "ARRIVAL",
+  COLLIDES = "COLLIDES",
+  SUCCES = "SUCCES",
+  GAMER_OVER = "GAMER_OVER",
 }
 
 // Variables CSS globales del juego...

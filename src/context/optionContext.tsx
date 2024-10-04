@@ -13,7 +13,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-// import soundsSource from "./sounds/soundsSource.mp3";
+import soundsSource from "./sounds/soundsSource.mp3";
 import type {
   IOptionsContext,
   IOptionsGame,
@@ -34,13 +34,17 @@ const ambientSound = new Howl({
 /**
  * Para los sonidos de la UI...
  */
-// const sounds = new Howl({
-//   src: [soundsSource],
-//   sprite: {
-//     CLICK: [0, 180],
-//     GAMER_OVER: [3900, 6000],
-//   },
-// });
+const sounds = new Howl({
+  src: [soundsSource],
+  sprite: {
+    CLICK: [0, 90],
+    CLICK_ARROW: [90, 130],
+    ARRIVAL: [200, 200],
+    COLLIDES: [400, 400],
+    SUCCES: [2000, 330],
+    GAMER_OVER: [2500, 500],
+  },
+});
 
 const OptionsContext = createContext<IOptionsContext | undefined>(undefined);
 
@@ -82,8 +86,7 @@ const OptionProvider: React.FC<OptionProviderProps> = ({ children }) => {
   const playSound = useCallback(
     (type: IESounds) => {
       if (optionsGame.SOUND) {
-        // sounds.play(type);
-        console.log("PARA LOS SONIDOS");
+        sounds.play(type);
       }
     },
     [optionsGame.SOUND]
@@ -95,11 +98,15 @@ const OptionProvider: React.FC<OptionProviderProps> = ({ children }) => {
   useEffect(() => {
     const onClickEvent = (e: MouseEvent) => {
       const target = e.target as Element;
+      const isArrow = target.classList.contains("arrow");
 
       /**
        * Sólo se tienen en cuenta algunos tags...
        */
-      if (["a", "button", "input"].includes(target?.tagName?.toLowerCase())) {
+      if (
+        !isArrow &&
+        ["a", "button", "input"].includes(target?.tagName?.toLowerCase())
+      ) {
         playSound(ESounds.CLICK);
       }
     };
