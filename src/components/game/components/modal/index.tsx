@@ -53,6 +53,8 @@ const Modal = ({
 
   const copy = getCopy(isSucces, isPause);
 
+  const isFinalLevel = numLevel === TOTAL_LEVELS;
+
   return (
     <div className={`modal-level ${isVisible ? "show" : "hide"}`}>
       <div className="modal-level-shadow" />
@@ -70,7 +72,7 @@ const Modal = ({
             {[
               {
                 action: "home",
-                label: "Menu",
+                label: "Home",
                 color: "gray",
               },
               {
@@ -84,7 +86,11 @@ const Modal = ({
                 color: "blue",
               },
             ].map(({ action, label, color }, key) => {
-              const showButton = action === "play" ? isPause || isSucces : true;
+              let showButton = action === "play" ? isPause || isSucces : true;
+
+              if (action === "play" && isFinalLevel) {
+                showButton = false;
+              }
 
               return (
                 showButton && (

@@ -1,8 +1,9 @@
 .game-nav {
   position: absolute;
   width: 100%;
-  /* border: 1px solid red; */
-  padding: 10px;
+  padding: 20px;
+  z-index: 2;
+  display: flex;
 }
 
 .game-nav-button {
@@ -11,4 +12,29 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
+}
+
+.game-nav-level {
+  /* border: 1px solid red; */
+  width: 290px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-nav-level-value {
+  animation: fadeInDown 500ms both;
+  background: white;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px;
+  width: 120px;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.game-nav-level-value.hide {
+  animation: fadeOutUp 500ms both;
 }

@@ -115,3 +115,12 @@ export interface IOptionsContext {
   toogleOptions: (type: IEOptionsGame) => void;
   playSound: (type: IESounds) => void;
 }
+
+/**
+ * Tipo para el serviworker
+ */
+export interface IServiceWorker {
+  serviceWorkerInitialized?: boolean;
+  serviceWorkerUpdated?: boolean;
+  serviceWorkerRegistration?: ServiceWorkerRegistration;
+}

@@ -10,7 +10,7 @@ export const BASE_WIDTH = 412;
 export const ARROW_SIZE = 52;
 export const LINE_SIZE = Math.round(ARROW_SIZE * 0.08);
 export const STOPPER_SIZE = Math.round(ARROW_SIZE * 0.25);
-export const WAIT_SHOW_MODAL_GAME_OVER = 500;
+export const WAIT_SHOW_MODAL_GAME_OVER = 300;
 export const SPEED = 300;
 export const SPEED_ROTATION = SPEED / 2;
 

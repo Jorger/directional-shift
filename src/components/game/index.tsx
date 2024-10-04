@@ -1,14 +1,9 @@
 import "./styles.css";
 import { Modal, NavBar, RenderBlocks } from "./components";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useOptionsContext } from "../../context/optionContext";
 import { useWait } from "../../hooks";
-import {
-  getArrowsData,
-  getLinesData,
-  getStoppersData,
-  validateClickArrow,
-  validateNextMovement,
-} from "./helpers";
 import {
   ESounds,
   ETypeActionGame,
@@ -17,14 +12,19 @@ import {
   ROUTES,
   WAIT_SHOW_MODAL_GAME_OVER,
 } from "../../utils/constants";
+import {
+  getArrowsData,
+  getLinesData,
+  getStoppersData,
+  validateClickArrow,
+  validateNextMovement,
+} from "./helpers";
 import type {
   IAnimate,
   IGameOver,
   ILevel,
   TTypeActionGame,
 } from "../../interfaces";
-import { useNavigate } from "react-router-dom";
-import { useOptionsContext } from "../../context/optionContext";
 
 interface GameProps {
   level: ILevel;
@@ -200,7 +200,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
   return (
     <div className="game">
       <Modal {...propsModal} />
-      <NavBar onPause={() => setIsPause(true)} />
+      <NavBar numLevel={numLevel} onPause={() => setIsPause(true)} />
       <RenderBlocks {...propsRenderBlocks} />
     </div>
   );
