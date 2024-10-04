@@ -1,3 +1,4 @@
+import "./styles.css";
 import { Iline, IStopper, IArrival, IPathArrow } from "../../../../interfaces";
 import { Line, Stopper, Arrival, Arrow } from "../../../uiGame";
 import React from "react";
@@ -25,7 +26,7 @@ const RenderBlocks = ({
   arrows,
   handleClickArrow,
 }: RenderBlocksProps) => (
-  <React.Fragment>
+  <div className="render-blocks">
     {/* Renderizar la líneas */}
     {lines.map((line) => line.visible && <Line {...line} key={line.index} />)}
     {/* Renderizar los stoppers */}
@@ -41,7 +42,7 @@ const RenderBlocks = ({
     {arrows.map(({ arrow }) => (
       <Arrow {...arrow} key={arrow.index} onSelect={handleClickArrow} />
     ))}
-  </React.Fragment>
+  </div>
 );
 
 export default RenderBlocks;

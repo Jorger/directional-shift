@@ -65,26 +65,16 @@
       "sizes": "540x720"
     },
     {
-      "src": "/screenshot/four.png",
-      "type": "image/jpeg",
-      "sizes": "540x720"
-    },
-    {
-      "src": "/screenshot/five.png",
-      "type": "image/jpeg",
-      "sizes": "540x720"
-    },
-    {
       "src": "/screenshot/form_factor.png",
       "sizes": "640x320",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "Ludo Game"
+      "label": "Don't Collide"
     }
   ],
   "start_url": "./",
   "display": "standalone",
-  "theme_color": "#00a6df",
-  "background_color": "#00a6df",
+  "theme_color": "#1e1e26",
+  "background_color": "#1e1e26",
   "orientation": "portrait"
 }
