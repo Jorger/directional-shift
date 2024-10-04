@@ -2,6 +2,7 @@ import "./styles.css";
 import Icon, { TypeIcon } from "../../components/icon";
 import Logo from "../../components/logo";
 import BackButton from "../../components/backButton";
+import Options from "../../components/options";
 
 export interface ISocialNetworks {
   title: string;
@@ -40,6 +41,7 @@ const SOCIAL_NETWORKS: ISocialNetworks[] = [
 const AboutPage = () => (
   <div className="about-game">
     <BackButton />
+    <Options />
     <div className="about-game-body">
       <Logo />
       <p>

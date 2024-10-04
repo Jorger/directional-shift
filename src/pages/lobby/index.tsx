@@ -2,8 +2,9 @@ import "./styles.css";
 import { Arrow } from "../../components/uiGame";
 import { GAME_INSTRUCTION, ROUTES } from "../../utils/constants";
 import { Link } from "react-router-dom";
-import Logo from "../../components/logo";
 import Icon from "../../components/icon";
+import Logo from "../../components/logo";
+import Options from "../../components/options";
 import Share from "../../components/share";
 
 const dataShare = {
@@ -14,6 +15,7 @@ const dataShare = {
 
 const LobbyPage = () => (
   <div className="lobby-page">
+    <Options />
     <div className="lobby-page-text">
       <Logo />
       <p className="lobby-page-instruction">{GAME_INSTRUCTION}</p>

@@ -1,0 +1,28 @@
+.game-options-button {
+  align-items: center;
+  border-radius: 5px;
+  display: flex;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  border-radius: 20px;
+  border: 2px solid #010f20;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.3) 0px -5px 0px inset;
+  cursor: pointer;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #216ed0;
+}
+
+.game-options-button .icon-wrapper {
+  width: 60%;
+}

@@ -1,3 +1,4 @@
+import { OptionProvider } from "../../../context/optionContext";
 import Container from "../container";
 import React from "react";
 
@@ -6,7 +7,9 @@ const AppWrapper = ({
 }: {
   children: JSX.Element | JSX.Element[];
 }) => (
-  <Container>{children}</Container>
+  <OptionProvider>
+    <Container>{children}</Container>
+  </OptionProvider>
 );
 
 export default React.memo(AppWrapper);

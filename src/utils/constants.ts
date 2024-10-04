@@ -1,4 +1,9 @@
-import { IAnimate, IGameOver, TAngleOrietantion } from "../interfaces";
+import {
+  IAnimate,
+  IGameOver,
+  IOptionsGame,
+  TAngleOrietantion,
+} from "../interfaces";
 
 export const BASE_HEIGHT = 732;
 export const BASE_WIDTH = 412;
@@ -164,6 +169,21 @@ export const ROUTES = {
   LEVELS: "/levels",
   ABOUT: "/about",
 };
+
+export enum EOptionsGame {
+  SOUND = "SOUND",
+  MUSIC = "MUSIC",
+}
+
+export const INITIAL_OPTIONS_GAME: IOptionsGame = {
+  [EOptionsGame.SOUND]: true,
+  [EOptionsGame.MUSIC]: true,
+};
+
+export enum ESounds {
+  GAMER_OVER = "GAMER_OVER",
+  CLICK = "CLICK",
+}
 
 // Variables CSS globales del juego...
 document.documentElement.style.setProperty("--base-height", `${BASE_HEIGHT}px`);
