@@ -9,9 +9,9 @@ import {
 } from "../../../../utils/constants";
 import Confetti from "react-dom-confetti";
 import Icon, { TypeIcon } from "../../../icon";
+import LEVELS from "../../../../utils/levels/levels";
 
-// TODO: cargar el total de niveles...
-const totalLevels = 30;
+const totalLevels = LEVELS.length;
 
 const getCopy = (isSucces = false, isPause = false) => {
   const typeLabel = isSucces ? "completed" : "gameOver";

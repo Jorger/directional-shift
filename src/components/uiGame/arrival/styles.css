@@ -1,9 +1,5 @@
 .arrival {
-  /* TODO: debe quedar el mismo color del fondo */
   background: #1e1e26;
-  /* background: white; */
-  /* TODO: sólo para pruebas, después se debe quitar */
-  /* opacity: 0.5; */
   box-shadow: #9b9fae 0px 0px 0px var(--arrow--shadow-1),
     #ced1d9 0px 0px 0px var(--arrow--shadow-2);
   height: var(--arrow-size);

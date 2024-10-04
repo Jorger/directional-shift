@@ -8,8 +8,8 @@
     #808080 100%
   );
 
-  /* TODO: la velocidad debe ser configurable */
-  transition: transform var(--speed) ease;
+  /* transition: transform var(--speed) ease; */
+  transition: transform var(--speed) linear;
 }
 
 .line.vertical {

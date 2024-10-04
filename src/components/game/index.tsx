@@ -141,6 +141,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
 
   const handleAction = (action = "") => {
     if (action === "home") {
+      // TODO: Implmentar el router...
       console.log("IR AL LOBBY");
     }
 
@@ -150,7 +151,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
 
     if (action === "play") {
       if (gameOver.isSucces) {
-        console.log("IR AL SIGUIENTE NIVEL");
+        onChangeLevel(ETypeActionGame.NEXTLEVEL);
       } else {
         setIsPause(false);
       }
