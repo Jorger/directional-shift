@@ -13,6 +13,7 @@ import {
   ETypeActionGame,
   INITIAL_ANIMATION_DATA,
   INITIAL_DATA_GAME_OVER,
+  ROUTES,
   WAIT_SHOW_MODAL_GAME_OVER,
 } from "../../utils/constants";
 import type {
@@ -21,6 +22,7 @@ import type {
   ILevel,
   TTypeActionGame,
 } from "../../interfaces";
+import { useNavigate } from "react-router-dom";
 
 interface GameProps {
   level: ILevel;
@@ -32,6 +34,10 @@ interface GameProps {
  * Componente principal del juego...
  */
 const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
+  /**
+   * Para el manejo del router...
+   */
+  const navigate = useNavigate();
   /**
    * Para las flechas de movimiento...
    */
@@ -91,8 +97,9 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
            */
           validateNextMovement({
             arrows,
-            runAnimation,
             lines,
+            numLevel,
+            runAnimation,
             setArrows,
             setGameOver,
             setLines,
@@ -104,7 +111,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
 
       runSync();
     }
-  }, [arrows, lines, runAnimation]);
+  }, [arrows, lines, numLevel, runAnimation]);
 
   /**
    * Espera un tiempo antes de mostrar el modal del gameOver
@@ -141,8 +148,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
 
   const handleAction = (action = "") => {
     if (action === "home") {
-      // TODO: Implmentar el router...
-      console.log("IR AL LOBBY");
+      navigate(ROUTES.LOBBY);
     }
 
     if (action === "undo") {

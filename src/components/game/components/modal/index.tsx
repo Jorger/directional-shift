@@ -1,23 +1,22 @@
 import "./styles.css";
 import { randomNumber } from "../../../../utils/helpers";
+import { TOTAL_LEVELS } from "../../../../utils/levels";
 import { useCallback, useState } from "react";
 import { useWait } from "../../../../hooks";
 import {
   CONFETTI_CONFIGURATION,
+  GAME_INSTRUCTION,
   MODAL_LABELS,
   WAIT_SHOW_MODAL_GAME_OVER,
 } from "../../../../utils/constants";
 import Confetti from "react-dom-confetti";
 import Icon, { TypeIcon } from "../../../icon";
-import LEVELS from "../../../../utils/levels/levels";
-
-const totalLevels = LEVELS.length;
 
 const getCopy = (isSucces = false, isPause = false) => {
   const typeLabel = isSucces ? "completed" : "gameOver";
   const totalCopy = MODAL_LABELS[typeLabel].length - 1;
   const label = MODAL_LABELS[typeLabel][randomNumber(0, totalCopy)];
-  return isPause ? `Don't collide. Move in ther correct order.` : label;
+  return isPause ? GAME_INSTRUCTION : label;
 };
 
 interface ModalProps {
@@ -47,7 +46,7 @@ const Modal = ({
   );
 
   const title = isPause
-    ? `${numLevel}/${totalLevels}`
+    ? `${numLevel}/${TOTAL_LEVELS}`
     : isSucces
     ? "You Win!"
     : "Game Over";

@@ -1,0 +1,123 @@
+.lobby-page {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 70%;
+  width: 90%;
+}
+
+.lobby-page-text {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lobby-page-instruction {
+  margin-top: 20px;
+  color: white;
+  font-size: 18px;
+}
+
+.lobby-page-arrow {
+  align-items: center;
+  animation: rotate 10s linear infinite;
+  display: flex;
+  height: 55px;
+  justify-content: center;
+  margin: 100px 0;
+  position: relative;
+  width: 55px;
+}
+
+.lobby-page-arrow .arrow {
+  pointer-events: none;
+  transform: scale(2) !important;
+}
+
+.lobby-page-play {
+  /* margin-top: 10px; */
+  align-items: center;
+  background: #ef233c;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 5px #d90429;
+  color: #fff;
+  display: flex;
+  font-size: 25px;
+  font-weight: bold;
+  height: 40px;
+  justify-content: center;
+  min-width: 130px;
+  outline: none;
+  padding: 5px 10px;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.lobby-page-play:hover {
+  box-shadow: 0 3px #d90429;
+  top: 1px;
+}
+
+.lobby-page-play:active {
+  box-shadow: 0 0 #d90429;
+  top: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.lobby-toolbar {
+  align-items: center;
+  bottom: 80px;
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+}
+
+.lobby-toolbar-button {
+  border-radius: 20px;
+  border: 2px solid #010f20;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.3) 0px -5px 0px inset;
+  cursor: pointer;
+  border-radius: 12px;
+  height: 60px;
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #216ed0;
+}
+
+.lobby-toolbar-button .icon-wrapper {
+  width: 50%;
+}
+
+.lobby-toolbar-button svg {
+  filter: drop-shadow(0 2px 1px black);
+}
+
+.lobby-toolbar-jam {
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.lobby-toolbar-jam a {
+  color: white;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
