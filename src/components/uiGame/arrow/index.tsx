@@ -34,7 +34,8 @@ const Arrow = ({
   const style: React.CSSProperties = {
     left: coordinate.x,
     top: coordinate.y,
-    rotate: `${rotation}deg`,
+    // rotate: `${rotation}deg`,
+    transform: `rotate(${rotation}deg)`,
   };
 
   return (

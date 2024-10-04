@@ -27,3 +27,6 @@ export const delay = (ms: number) =>
 
 export const randomNumber = (min = 0, max = 0) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
+
+export const fillArray = (length = 1) =>
+  Array.from({ length }, (_, index) => index);

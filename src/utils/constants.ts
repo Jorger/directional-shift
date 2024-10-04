@@ -6,9 +6,9 @@ export const ARROW_SIZE = 52;
 export const LINE_SIZE = Math.round(ARROW_SIZE * 0.08);
 export const STOPPER_SIZE = Math.round(ARROW_SIZE * 0.25);
 export const WAIT_SHOW_MODAL_GAME_OVER = 500;
-export const SPEED = "300ms";
+export const SPEED = 300;
+export const SPEED_ROTATION = SPEED / 2;
 
-// TODO: revisar si puede ser la misma interfaz de ELineOrigin
 export enum EOrietantation {
   BOTTOM = "BOTTOM",
   LEFT = "LEFT",
@@ -26,7 +26,6 @@ export enum ELineScale {
   scaleY = "scaleY",
 }
 
-// TODO: revisar si puede ser la misma interfaz de EOrietantation
 export enum ELineOrigin {
   left = "left",
   right = "right",
@@ -183,4 +182,8 @@ document.documentElement.style.setProperty(
   `${STOPPER_SIZE}px`
 );
 
-document.documentElement.style.setProperty("--speed", `${SPEED}`);
+document.documentElement.style.setProperty("--speed", `${SPEED}ms`);
+document.documentElement.style.setProperty(
+  "--speed-rotation",
+  `${SPEED_ROTATION}ms`
+);

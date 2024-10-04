@@ -33,6 +33,7 @@ import type {
   TOrietantation,
 } from "../../interfaces";
 import { copyToClipboard } from "../../utils/helpers";
+import { BASE_LEVEL } from "./testLevel";
 
 interface IPosition {
   coordinate: ICoordinate;
@@ -644,13 +645,15 @@ const computeStoppers = (lines: Iline[] = []) => {
 
 const Editor = () => {
   const [imageURL, setImageURL] = useState("");
-  const [arrows, setArrows] = useState<IArrow[]>([]);
-  const [arrivals, setArrivals] = useState<IArrival[]>([]);
+  const [arrows, setArrows] = useState<IArrow[]>(BASE_LEVEL.arrows as IArrow[]);
+  const [arrivals, setArrivals] = useState<IArrival[]>(BASE_LEVEL.arrivals);
   const [stoppers, setStoppers] = useState<IStopper[]>([]);
   const [lines, setLines] = useState<Iline[]>([]);
 
   // Donde se guarda la data a donde irán los arrows...
-  const [arrowsGhost, setArrowsGhost] = useState<IArrowGhost[]>([]);
+  const [arrowsGhost, setArrowsGhost] = useState<IArrowGhost[]>(
+    BASE_LEVEL.arrowsGhost as IArrowGhost[]
+  );
 
   // const [lines, setLines] = useState<Iline[]>([]);
 

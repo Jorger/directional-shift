@@ -2,7 +2,6 @@ import {
   ANGLE_ORIENTATION,
   ARROW_SIZE,
   ELineFinish,
-  ELineOrigin,
   EOrietantation,
   EStateArrow,
   ETypeAnimation,
@@ -65,7 +64,7 @@ const validateColision = (
    * Si hay colisión se compesa la posición...
    */
   if (colission) {
-    const lineOrigin = line.transform.origin;
+    // const lineOrigin = line.transform.origin;
     const { orientation } = arrows[indexArrow].arrow;
     let newX = x;
     let newY = y;
@@ -104,12 +103,24 @@ const validateColision = (
      */
     scaleLine = +(diferenceCollision / diferenceGlobalPosition).toFixed(2);
 
+    // console.clear();
+
+    // console.log({
+    //   movingBox,
+    //   scaleLine,
+    //   diferenceCollision,
+    //   diferenceGlobalPosition,
+    //   lineOrigin,
+    // });
+
+    // lineOrigin === ELineOrigin.right || lineOrigin === ELineOrigin.top
     /**
      * Se compesa el valor dependiendo de la dirección...
      */
-    if (lineOrigin === ELineOrigin.right || lineOrigin === ELineOrigin.top) {
-      scaleLine = 1 - scaleLine;
-    }
+    // if (lineOrigin !== ELineOrigin.bottom) {
+    //   scaleLine = 1 - scaleLine;
+    // }
+    scaleLine = 1 - scaleLine;
 
     /**
      * Se establecen los nuevos valores a los cuales irá el arrow...
@@ -219,8 +230,6 @@ interface ValidateClickArrow {
  * @param param0
  * @returns
  */
-// TODO: Se debe guardar si hay colisión para que así no continúe y
-// se muestre el game over...
 export const validateClickArrow = ({
   arrowRef,
   arrows,
@@ -378,7 +387,6 @@ export const validateNextMovement = ({
      * El índice de la línea que se ha movido, con este se puede
      * establecer que la línea no es visible para quitarla del DOM...
      */
-    // TODO: se debe hacer algo similar con los stoppers...
     copyLines[indexLine].visible = false;
     setLines(copyLines);
 
