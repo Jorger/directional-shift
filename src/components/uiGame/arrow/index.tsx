@@ -5,7 +5,7 @@ import type { IArrow } from "../../../interfaces";
 
 interface ArrowProps extends IArrow {
   isSelected?: boolean;
-  onSelect: (index: number, ref?: React.RefObject<HTMLButtonElement>) => void;
+  onSelect?: (index: number, ref?: React.RefObject<HTMLButtonElement>) => void;
 }
 
 const Arrow = ({
@@ -44,7 +44,7 @@ const Arrow = ({
       className={className}
       style={style}
       disabled={disabled}
-      onClick={() => onSelect(index, ref)}
+      onClick={() => onSelect && onSelect(index, ref)}
     />
   );
 };

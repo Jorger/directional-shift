@@ -1,0 +1,21 @@
+.logo-game {
+  color: white;
+  font-size: 40px;
+  text-shadow: 1px 1px 20px #2196f3;
+  text-transform: uppercase;
+  animation: bounceIn 1s both;
+}
+
+.logo-game span {
+  font-size: 50px;
+}
+
+@media (max-width: 400px) {
+  .logo-game {
+    font-size: 30px;
+  }
+
+  .logo-game span {
+    font-size: 40px;
+  }
+}

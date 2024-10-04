@@ -30,3 +30,25 @@ export const randomNumber = (min = 0, max = 0) =>
 
 export const fillArray = (length = 1) =>
   Array.from({ length }, (_, index) => index);
+
+/**
+ * Valida si un string es un JSON valido...
+ * @param json
+ * @returns
+ */
+export const isValidJson = (json: string): boolean => {
+  try {
+    JSON.parse(json);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
+/**
+ * Valida que un valor dado sea un número...
+ * @param value
+ * @returns
+ */
+export const isNumber = (value: any): value is number =>
+  typeof value === "number" && !isNaN(value);

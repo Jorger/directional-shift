@@ -140,6 +140,8 @@ export const MODAL_LABELS = {
   ],
 };
 
+export const GAME_INSTRUCTION = `Don't collide. Move in the correct order.`;
+
 /**
  * Configración para el componente de confetti
  */
@@ -155,6 +157,12 @@ export const CONFETTI_CONFIGURATION = {
   height: "10px",
   perspective: "500px",
   colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"],
+};
+
+export const ROUTES = {
+  LOBBY: "/",
+  LEVELS: "/levels",
+  ABOUT: "/about",
 };
 
 // Variables CSS globales del juego...

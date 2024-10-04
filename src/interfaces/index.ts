@@ -27,7 +27,7 @@ export interface ICoordinate {
 }
 
 export interface IArrow {
-  index: number;
+  index?: number;
   orientation: TOrietantation;
   coordinate: ICoordinate;
   state: TStateArrow;

@@ -1,3 +1,4 @@
+import { saveLevelPassedNumber } from "../../utils/levels";
 import {
   ANGLE_ORIENTATION,
   ARROW_SIZE,
@@ -64,7 +65,6 @@ const validateColision = (
    * Si hay colisión se compesa la posición...
    */
   if (colission) {
-    // const lineOrigin = line.transform.origin;
     const { orientation } = arrows[indexArrow].arrow;
     let newX = x;
     let newY = y;
@@ -103,23 +103,6 @@ const validateColision = (
      */
     scaleLine = +(diferenceCollision / diferenceGlobalPosition).toFixed(2);
 
-    // console.clear();
-
-    // console.log({
-    //   movingBox,
-    //   scaleLine,
-    //   diferenceCollision,
-    //   diferenceGlobalPosition,
-    //   lineOrigin,
-    // });
-
-    // lineOrigin === ELineOrigin.right || lineOrigin === ELineOrigin.top
-    /**
-     * Se compesa el valor dependiendo de la dirección...
-     */
-    // if (lineOrigin !== ELineOrigin.bottom) {
-    //   scaleLine = 1 - scaleLine;
-    // }
     scaleLine = 1 - scaleLine;
 
     /**
@@ -134,6 +117,7 @@ const validateColision = (
 
 interface ValidateCompletedLevel {
   arrows: IPathArrow[];
+  numLevel: number;
   setGameOver: React.Dispatch<React.SetStateAction<IGameOver>>;
 }
 
@@ -142,6 +126,7 @@ interface ValidateCompletedLevel {
  */
 const validateCompletedLevel = ({
   arrows,
+  numLevel,
   setGameOver,
 }: ValidateCompletedLevel) => {
   /**
@@ -161,6 +146,11 @@ const validateCompletedLevel = ({
    */
   if (totalArrows === arrowsArrivalPoint) {
     setGameOver({ isGameOver: true, showModal: false, isSucces: true });
+
+    /**
+     * Guardar en localSrorage el nivel que ha pasado
+     */
+    saveLevelPassedNumber(numLevel);
   }
 };
 
@@ -310,6 +300,7 @@ interface ValidateNextMovement {
   arrows: IPathArrow[];
   runAnimation: IAnimate;
   lines: Iline[];
+  numLevel: number;
   setArrows: React.Dispatch<React.SetStateAction<IPathArrow[]>>;
   setGameOver: React.Dispatch<React.SetStateAction<IGameOver>>;
   setLines: React.Dispatch<React.SetStateAction<Iline[]>>;
@@ -325,6 +316,7 @@ export const validateNextMovement = ({
   arrows,
   runAnimation,
   lines,
+  numLevel,
   setArrows,
   setGameOver,
   setLines,
@@ -498,7 +490,7 @@ export const validateNextMovement = ({
       /**
        * Para validar si ha terminado de llevar todos los arrows...
        */
-      validateCompletedLevel({ arrows: copyArrows, setGameOver });
+      validateCompletedLevel({ arrows: copyArrows, numLevel, setGameOver });
     }
   }
 
