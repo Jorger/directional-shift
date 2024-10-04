@@ -1,5 +1,6 @@
 import "./styles.css";
 import Icon from "../../../icon";
+import Options from "../../../options";
 
 interface NavBarProps {
   onPause: () => void;
@@ -11,6 +12,7 @@ const NavBar = ({ onPause }: NavBarProps) => {
       <button className="game-nav-button" onClick={onPause}>
         <Icon type="pause" />
       </button>
+      <Options />
     </div>
   );
 };

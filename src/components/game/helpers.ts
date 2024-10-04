@@ -4,6 +4,7 @@ import {
   ARROW_SIZE,
   ELineFinish,
   EOrietantation,
+  ESounds,
   EStateArrow,
   ETypeAnimation,
 } from "../../utils/constants";
@@ -12,6 +13,7 @@ import cloneDeep from "lodash.clonedeep";
 import type {
   IAnimate,
   ICoordinate,
+  IESounds,
   IGameOver,
   Iline,
   IPathArrow,
@@ -301,6 +303,7 @@ interface ValidateNextMovement {
   runAnimation: IAnimate;
   lines: Iline[];
   numLevel: number;
+  playSound: (type: IESounds) => void;
   setArrows: React.Dispatch<React.SetStateAction<IPathArrow[]>>;
   setGameOver: React.Dispatch<React.SetStateAction<IGameOver>>;
   setLines: React.Dispatch<React.SetStateAction<Iline[]>>;
@@ -317,6 +320,7 @@ export const validateNextMovement = ({
   runAnimation,
   lines,
   numLevel,
+  playSound,
   setArrows,
   setGameOver,
   setLines,
@@ -345,6 +349,8 @@ export const validateNextMovement = ({
     setArrows(copyArrows);
 
     copyRunAnimation.isAnimate = false;
+
+    playSound(ESounds.COLLIDES);
     return setRunAnimation(copyRunAnimation);
   }
 
@@ -483,6 +489,8 @@ export const validateNextMovement = ({
     }
 
     if (currentLineFinish === ELineFinish.ARRIVAL) {
+      playSound(ESounds.ARRIVAL);
+
       copyRunAnimation.isAnimate = false;
       // copyRunAnimation.reachesTarget = true;
       copyArrows[arrowIndex].arrow.state = EStateArrow.FINISH;

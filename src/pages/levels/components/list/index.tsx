@@ -2,6 +2,7 @@ import "./styles.css";
 import { fillArray } from "../../../../utils/helpers";
 import { getLevelPassedNumber, TOTAL_LEVELS } from "../../../../utils/levels";
 import BackButton from "../../../../components/backButton";
+import Options from "../../../../components/options";
 
 interface ListLevelsProps {
   onClickLevel: (numLevel: number) => void;
@@ -16,6 +17,7 @@ const ListLevels = ({ onClickLevel }: ListLevelsProps) => {
   return (
     <div className="list-levels">
       <BackButton />
+      <Options />
       <h2>SELECT LEVEL</h2>
       <div className="list-levels-wrapper">
         {fillArray(TOTAL_LEVELS).map((numLevel) => {

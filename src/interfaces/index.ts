@@ -2,7 +2,9 @@ import {
   ELineFinish,
   ELineOrigin,
   ELineScale,
+  EOptionsGame,
   EOrietantation,
+  ESounds,
   EStateArrow,
   ETypeActionGame,
   ETypeAnimation,
@@ -15,6 +17,8 @@ export type TStateArrow = keyof typeof EStateArrow;
 export type TLineFinish = keyof typeof ELineFinish;
 export type TTypeAnimation = keyof typeof ETypeAnimation;
 export type TTypeActionGame = keyof typeof ETypeActionGame;
+export type IEOptionsGame = keyof typeof EOptionsGame;
+export type IESounds = keyof typeof ESounds;
 
 export interface ILineTranform {
   scale: TLineScale;
@@ -100,4 +104,14 @@ export interface IGameOver {
   isGameOver: boolean;
   showModal: boolean;
   isSucces: boolean;
+}
+
+/**
+ * Para las opciones del juego...
+ */
+export type IOptionsGame = Record<IEOptionsGame, boolean>;
+export interface IOptionsContext {
+  optionsGame: IOptionsGame;
+  toogleOptions: (type: IEOptionsGame) => void;
+  playSound: (type: IESounds) => void;
 }

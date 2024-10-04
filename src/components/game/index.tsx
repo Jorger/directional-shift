@@ -10,6 +10,7 @@ import {
   validateNextMovement,
 } from "./helpers";
 import {
+  ESounds,
   ETypeActionGame,
   INITIAL_ANIMATION_DATA,
   INITIAL_DATA_GAME_OVER,
@@ -23,6 +24,7 @@ import type {
   TTypeActionGame,
 } from "../../interfaces";
 import { useNavigate } from "react-router-dom";
+import { useOptionsContext } from "../../context/optionContext";
 
 interface GameProps {
   level: ILevel;
@@ -34,6 +36,10 @@ interface GameProps {
  * Componente principal del juego...
  */
 const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
+  /**
+   * Para el manejo de sonidos
+   */
+  const { playSound } = useOptionsContext();
   /**
    * Para el manejo del router...
    */
@@ -100,6 +106,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
             lines,
             numLevel,
             runAnimation,
+            playSound,
             setArrows,
             setGameOver,
             setLines,
@@ -111,7 +118,7 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
 
       runSync();
     }
-  }, [arrows, lines, numLevel, runAnimation]);
+  }, [arrows, lines, numLevel, playSound, runAnimation]);
 
   /**
    * Espera un tiempo antes de mostrar el modal del gameOver
@@ -121,8 +128,13 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
     WAIT_SHOW_MODAL_GAME_OVER,
     // Se usa el useCallback para evitar que la función se genere cada vez que renderiza el componente...
     useCallback(
-      () => setGameOver((current) => ({ ...current, showModal: true })),
-      []
+      () =>
+        setGameOver((current) => {
+          playSound(current.isSucces ? ESounds.SUCCES : ESounds.GAMER_OVER);
+
+          return { ...current, showModal: true };
+        }),
+      [playSound]
     )
   );
 
@@ -143,6 +155,8 @@ const Game = ({ level, numLevel, onChangeLevel }: GameProps) => {
         setRunAnimation,
         setLines,
       });
+
+      playSound(ESounds.CLICK_ARROW);
     }
   };
 
